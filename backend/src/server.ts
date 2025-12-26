@@ -394,14 +394,14 @@ const transactions: Transaction[] = [
 
 
 
-
-
-
-
-
 function isValidBudgetType(type: string): type is BudgetType {
   return type === "personal" || type === "shared" || type === "family";
 }
+
+
+
+
+
 
 
 
@@ -431,6 +431,15 @@ app.get('/api/categories/:budgetType', (req: Request, res: Response) => {
   
 })
 
+app.get('/api/transactions', (req: Request, res: Response) => {
+  const sortedTransactions = [...transactions].sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+  );
+})
+
+app.post('/api/transactions', (req: Request, res: Response) => {
+  
+})
 
 
 app.listen(PORT, () => {
