@@ -399,7 +399,23 @@ function isValidBudgetType(type: string): type is BudgetType {
 }
 
 
-
+function findAndUpdateCategory(
+  budgetType: BudgetType, 
+  categoryId: string,
+  updateFn: (category: Category) => void 
+): Category | null {
+  const budgetData = categories[budgetType];
+  
+  for(const group of budgetData){
+    for(const category of group.categories){
+      if(category.id === categoryId){
+        updateFn(category);
+        return category;
+      }
+    }
+  }
+  return null;
+}
 
 
 
@@ -413,6 +429,7 @@ const PORT = 8000;
 app.use(cors());
 app.use(express.json());
 
+// Remove later
 app.get('/api/health', (req: Request, res: Response) => {
   res.json({ status: "healthy", message: "we goood gng"});
 });
@@ -437,8 +454,59 @@ app.get('/api/transactions', (req: Request, res: Response) => {
   );
 })
 
+let transactionIdCounter: number = 8; // start at 8 since we have some dummy data already 
+
+// User adds a new transaction
 app.post('/api/transactions', (req: Request, res: Response) => {
-  
+  const { date, payee, categoryId, amount, notes, type, budgetType } = req.body;
+
+  if(!date || !payee || !amount || !type){
+    res.status(400).json({
+      error: "Missing required fields."
+    });
+    return;
+  }
+
+  if(type !== "expense" || type !== "income"){
+    res.status(400).json({
+      error: "Invalid Type: Must be 'expense' or 'income'."
+    });
+    return;
+  }
+
+  if(typeof amount !== "number" || amount <= 0){
+    res.status(400).json({
+      error: "Amount must be a non-negative number."
+    });
+    return;
+  }
+
+  // Create new transaction
+  const newTransaction: Transaction = {
+    id: String(transactionIdCounter++),
+    date,
+    payee,
+    categoryId: categoryId || "uncategorized",
+    amount, 
+    type,
+    notes: notes || "",
+  };
+
+  transactions.push(newTransaction);
+
+  if(categoryId && type === "expense" && budgetType && isValidBudgetType(budgetType)){
+    findAndUpdateCategory(budgetType, categoryId, (category) => {
+      category.spent += amount;
+      category.available = category.budgeted - category.spent;
+    });
+  }
+
+  // Add for 'income'
+
+
+
+
+
 })
 
 
