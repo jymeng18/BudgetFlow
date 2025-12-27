@@ -1,15 +1,16 @@
 /**
  * Filename: server.ts
- * 
+ *
  * Desc: Backend API for webapp
- * 
+ *
  * Author: Jerry Meng
- * 
+ *
  * Last modified: Dec 2025
  */
 
-import express, { Request, Response } from 'express';
-import cors from 'cors';
+import express, { Request, Response } from "express";
+import cors from "cors";
+import { error } from "node:console";
 
 // 'Groceries' or 'Utilities'
 interface Category {
@@ -40,7 +41,7 @@ interface Transaction {
 type BudgetType = "personal" | "shared" | "family";
 type CategoriesData = Record<BudgetType, CategoryGroup[]>;
 
-// In memory storage temporarily - move to db later 
+// In memory storage temporarily - move to db later
 const categories: CategoriesData = {
   personal: [
     {
@@ -387,28 +388,20 @@ const transactions: Transaction[] = [
   },
 ];
 
-
-
-
-
-
-
-
 function isValidBudgetType(type: string): type is BudgetType {
   return type === "personal" || type === "shared" || type === "family";
 }
 
-
 function findAndUpdateCategory(
-  budgetType: BudgetType, 
+  budgetType: BudgetType,
   categoryId: string,
-  updateFn: (category: Category) => void 
+  updateFn: (category: Category) => void
 ): Category | null {
   const budgetData = categories[budgetType];
-  
-  for(const group of budgetData){
-    for(const category of group.categories){
-      if(category.id === categoryId){
+
+  for (const group of budgetData) {
+    for (const category of group.categories) {
+      if (category.id === categoryId) {
         updateFn(category);
         return category;
       }
@@ -416,11 +409,6 @@ function findAndUpdateCategory(
   }
   return null;
 }
-
-
-
-
-
 
 const app = express();
 
@@ -430,53 +418,52 @@ app.use(cors());
 app.use(express.json());
 
 // Remove later
-app.get('/api/health', (req: Request, res: Response) => {
-  res.json({ status: "healthy", message: "we goood gng"});
+app.get("/api/health", (req: Request, res: Response) => {
+  res.json({ status: "healthy", message: "we goood gng" });
 });
 
-app.get('/api/categories/:budgetType', (req: Request, res: Response) => {
+app.get("/api/categories/:budgetType", (req: Request, res: Response) => {
   const { budgetType } = req.params;
 
-  if(!isValidBudgetType(budgetType)){
+  if (!isValidBudgetType(budgetType)) {
     res.status(400).json({
-      error: "Invalid budget type."
+      error: "Invalid budget type.",
     });
     return;
   }
 
   res.json();
-  
-})
+});
 
-app.get('/api/transactions', (req: Request, res: Response) => {
+app.get("/api/transactions", (req: Request, res: Response) => {
   const sortedTransactions = [...transactions].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
-})
+  res.json(sortedTransactions);
+});
 
-let transactionIdCounter: number = 8; // start at 8 since we have some dummy data already 
+let transactionIdCounter: number = 8; // start at 8 since we have some dummy data already
 
-// User adds a new transaction
-app.post('/api/transactions', (req: Request, res: Response) => {
+app.post("/api/transactions", (req: Request, res: Response) => {
   const { date, payee, categoryId, amount, notes, type, budgetType } = req.body;
 
-  if(!date || !payee || !amount || !type){
+  if (!date || !payee || !amount || !type) {
     res.status(400).json({
-      error: "Missing required fields."
+      error: "Missing required fields.",
     });
     return;
   }
 
-  if(type !== "expense" || type !== "income"){
+  if (type !== "expense" || type !== "income") {
     res.status(400).json({
-      error: "Invalid Type: Must be 'expense' or 'income'."
+      error: "Invalid Type: Must be 'expense' or 'income'.",
     });
     return;
   }
 
-  if(typeof amount !== "number" || amount <= 0){
+  if (typeof amount !== "number" || amount <= 0) {
     res.status(400).json({
-      error: "Amount must be a non-negative number."
+      error: "Amount must be a non-negative number.",
     });
     return;
   }
@@ -487,14 +474,19 @@ app.post('/api/transactions', (req: Request, res: Response) => {
     date,
     payee,
     categoryId: categoryId || "uncategorized",
-    amount, 
+    amount,
     type,
     notes: notes || "",
   };
 
   transactions.push(newTransaction);
 
-  if(categoryId && type === "expense" && budgetType && isValidBudgetType(budgetType)){
+  if (
+    categoryId &&
+    type === "expense" &&
+    budgetType &&
+    isValidBudgetType(budgetType)
+  ) {
     findAndUpdateCategory(budgetType, categoryId, (category) => {
       category.spent += amount;
       category.available = category.budgeted - category.spent;
@@ -502,13 +494,83 @@ app.post('/api/transactions', (req: Request, res: Response) => {
   }
 
   // Add for 'income'
+  if (
+    categoryId &&
+    type === "income" &&
+    budgetType &&
+    isValidBudgetType(budgetType)
+  ) {
+    findAndUpdateCategory(budgetType, categoryId, (category) => {
+      category.available += amount;
+    });
+  }
 
+  res.status(201).json({
+    message: "Transaction added succesffuly",
+    transaction: newTransaction,
+  });
+});
 
+app.delete("/api/transactions/:id", (req: Request, res: Response) => {
+  const { id } = req.params;
 
+  const index = transactions.findIndex((transaction) => transaction.id === id);
 
+  if (index === -1) {
+    res.status(404).json({
+      error: "Transaction not found.",
+    });
+  }
 
-})
+  const deleted = transactions.splice(index, 1)[0];
 
+  res.status(200).json({
+    message: "Transaction successfully deleted",
+    transaction: deleted,
+  });
+});
+
+app.put(
+  "/api/transactions/:budgetType/:categoryId/budget",
+  (req: Request, res: Response) => {
+    const { budgetType, categoryId } = req.params;
+    const { budgeted } = req.body;
+
+    if (!isValidBudgetType(budgetType)) {
+      res.status(400).json({
+        message: "Invalid budget type.",
+      });
+      return;
+    }
+
+    if (typeof budgeted !== "number" || budgeted < 0) {
+      res.status(400).json({
+        error: "Expected amount to be positive.",
+      });
+      return;
+    }
+
+    const category = findAndUpdateCategory(
+      budgetType,
+      categoryId,
+      (category) => {
+        category.budgeted += budgeted;
+        category.available = budgeted - category.spent;
+      }
+    );
+
+    if (!category) {
+      res.status(404).json({
+        error: "Category not found.",
+      });
+    }
+
+    res.status(200).json({
+      message: "Updated budget succesffuly.",
+      category,
+    });
+  }
+);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
