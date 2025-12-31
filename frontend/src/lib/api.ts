@@ -86,3 +86,14 @@ export async function addTransanction(transaction: { // Backennd will send back 
     }
     return response.json();
 }
+
+export async function deleteTransaction(id: number): Promise<{ message: string; }> {
+    const response = await fetch(`${API_BASE_URL}/transactions/${id}`, {
+        method: "DELETE",
+    });
+
+    if(!response.ok){
+        throw new Error("Failed to delete a transaction.");
+    }
+    return response.json();
+}
