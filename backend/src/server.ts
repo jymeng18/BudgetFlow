@@ -432,7 +432,7 @@ app.get("/api/categories/:budgetType", (req: Request, res: Response) => {
     return;
   }
 
-  res.json();
+  res.json(categories[budgetType]);
 });
 
 app.get("/api/transactions", (req: Request, res: Response) => {
