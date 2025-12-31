@@ -64,8 +64,8 @@ const Landing = () => {
     <div>
 
         {/* 5 Cards Section */}
-        <div className="">
-            
+        <div>
+            <h1>LANDING PAGE!</h1>
         </div>
     </div>
   )
