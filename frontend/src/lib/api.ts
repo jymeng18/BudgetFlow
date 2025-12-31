@@ -64,7 +64,8 @@ export async function getTransactions(): Promise<Transaction[]> {
     return response.json();
 }
 
-export async function addTransanction(transaction: { // Backennd will send back id
+export async function addTransanction(transaction: {
+    // Backennd will send back id
     date: string;
     payee: string;
     categoryId: string;
@@ -72,28 +73,64 @@ export async function addTransanction(transaction: { // Backennd will send back 
     notes: string;
     type: "expense" | "income";
 }): Promise<{ message: string; transaction: Transaction }> {
-    const response = await fetch(`${API_BASE_URL}/transactions`, 
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(transaction),
-        });
-    
-    if(!response.ok){
+    const response = await fetch(`${API_BASE_URL}/transactions`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(transaction),
+    });
+
+    if (!response.ok) {
         throw new Error("Failed to add new transaction.");
     }
     return response.json();
 }
 
-export async function deleteTransaction(id: number): Promise<{ message: string; }> {
+export async function deleteTransaction(
+    id: number
+): Promise<{ message: string }> {
     const response = await fetch(`${API_BASE_URL}/transactions/${id}`, {
         method: "DELETE",
     });
 
-    if(!response.ok){
+    if (!response.ok) {
         throw new Error("Failed to delete a transaction.");
     }
+    return response.json();
+}
+
+export async function updateCategoryBudget(
+    budgetType: string,
+    categoryId: string,
+    budgeted: number
+): Promise<{ message: string; category: Category }> {
+    const response = await fetch(
+        `${API_BASE_URL}/categories/${budgetType}/${categoryId}/budget`,
+        {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ budgeted }),
+        }
+    );
+
+    if (!response.ok) {
+        throw new Error("Failed to update budget");
+    }
+
+    return response.json();
+}
+
+export async function getBudgetSummary(
+    budgetType: string
+): Promise<BudgetSummary> {
+    const response = await fetch(`${API_BASE_URL}/summary/${budgetType}`);
+
+    if (!response.ok) {
+        throw new Error("Failed to fetch summary");
+    }
+
     return response.json();
 }
