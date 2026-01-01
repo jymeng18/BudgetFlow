@@ -23,6 +23,8 @@ import {
   PiggyBank,
 } from "lucide-react";
 
+import { Sidebar } from "@/components/layout/Sidebar";
+
 interface Feature {
   icon: ReactNode;
   title: string;
@@ -62,9 +64,9 @@ const Landing = () => {
 
   return (
     <div>
-
         {/* 5 Cards Section */}
         <div>
+            <Sidebar />
             <h1>LANDING PAGE!</h1>
         </div>
     </div>
