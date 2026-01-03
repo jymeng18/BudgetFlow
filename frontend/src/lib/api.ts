@@ -72,6 +72,7 @@ export async function addTransaction(transaction: {
     amount: number;
     notes: string;
     type: "expense" | "income";
+    budgetType: string;
 }): Promise<{ message: string; transaction: Transaction }> {
     const response = await fetch(`${API_BASE_URL}/transactions`, {
         method: "POST",
