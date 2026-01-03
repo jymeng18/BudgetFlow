@@ -528,6 +528,12 @@ app.delete("/api/transactions/:id", (req: Request, res: Response) => {
     });
   }
 
+  /**
+   * FIXME: Currently when we delete a transaction, we only
+   * update the array itself, but we need to undo the amount the transaction
+   * added/subtracted from a category/budget
+   */
+
   const deleted = transactions.splice(index, 1)[0];
 
   res.status(200).json({
@@ -537,7 +543,7 @@ app.delete("/api/transactions/:id", (req: Request, res: Response) => {
 });
 
 app.put(
-  "/api/transactions/:budgetType/:categoryId/budget",
+  "/api/categories/:budgetType/:categoryId/budget",
   (req: Request, res: Response) => {
     const { budgetType, categoryId } = req.params;
     const { budgeted } = req.body;
@@ -560,7 +566,7 @@ app.put(
       budgetType,
       categoryId,
       (category) => {
-        category.budgeted += budgeted;
+        category.budgeted = budgeted;
         category.available = budgeted - category.spent;
       }
     );
