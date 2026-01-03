@@ -14,6 +14,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 import NotFound from "./pages/NotFound.tsx"
 import Landing from './pages/Landing.tsx';
+import Index from './pages/Index.tsx';
 
 const queryClient = new QueryClient();
 
@@ -22,8 +23,8 @@ function App() {
     <QueryClientProvider client={queryClient}> {/* Provide QueryClient instance to all nested comps */}
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/app" element={<h1>App page!</h1>} />
+          <Route path="/" element={<h1>Landing!</h1>} />
+          <Route path="/app" element={<Index />} />
           <Route path="/reports" element={<h1>Reports!</h1>} />
           <Route path="/ai-insights" element={<h1>AI ins page!</h1>} />
           <Route path="/settings" element={<h1>Settings page!</h1>} />
