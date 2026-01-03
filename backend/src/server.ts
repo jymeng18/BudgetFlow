@@ -454,7 +454,7 @@ app.post("/api/transactions", (req: Request, res: Response) => {
     return;
   }
 
-  if (type !== "expense" || type !== "income") {
+  if (type !== "expense" && type !== "income") {
     res.status(400).json({
       error: "Invalid Type: Must be 'expense' or 'income'.",
     });
