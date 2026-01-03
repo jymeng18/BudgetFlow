@@ -88,7 +88,7 @@ export async function addTransanction(transaction: {
 }
 
 export async function deleteTransaction(
-    id: number
+    id: string
 ): Promise<{ message: string }> {
     const response = await fetch(`${API_BASE_URL}/transactions/${id}`, {
         method: "DELETE",
