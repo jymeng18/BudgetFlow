@@ -572,6 +572,48 @@ app.put(
   }
 );
 
+// Just the total stats of your finances
+app.get("/api/summary/:budgetType", (req: Request, res: Response) => {
+  const { budgetType } = req.params;
+
+  if(!isValidBudgetType(budgetType)){
+    res.status(404).json({
+      message: "Invalid Budget Type.",
+    });
+  }
+
+  let totalIncome = 0;
+  let totalAvailable = 0;
+  let totalBudgeted = 0;
+  let totalSpent = 0;
+  
+  const budgetData = categories[budgetType as keyof CategoriesData];
+
+  for(let group of budgetData){
+    for(let cat of group.categories){
+      totalAvailable += cat.available;
+      totalBudgeted += cat.budgeted;
+      totalSpent += cat.spent;
+    }
+  }
+
+  for(let t of transactions){
+    if(t.type === "income"){
+      totalIncome += t.amount;
+    }
+  }
+
+  res.status(200).json({
+    budgetType: budgetType,
+    totalIncome: totalIncome,
+    totalBudgeted: totalBudgeted,
+    totalSpent: totalSpent,
+    totalAvailable: totalAvailable,
+  });
+});
+
+
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`Visit: http://localhost:${PORT}`);

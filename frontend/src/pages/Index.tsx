@@ -74,6 +74,7 @@ const Index = () => {
         setIsLoading(true);
         try {
             // Fetch categories, transactions, and summary in parallel
+            // Note: all calls to backend must suceed
             const [categoriesData, transactionsData, summaryData] =
                 await Promise.all([
                     getCategories(budgetType),
