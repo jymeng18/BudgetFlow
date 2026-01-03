@@ -436,9 +436,15 @@ app.get("/api/categories/:budgetType", (req: Request, res: Response) => {
 });
 
 app.get("/api/transactions", (req: Request, res: Response) => {
-  const sortedTransactions = [...transactions].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-  );
+  const sortedTransactions = [...transactions].sort((a, b) => {
+    const dateComparison =
+      new Date(b.date).getTime() - new Date(a.date).getTime();
+    // If dates are the same, sort by ID (newer transactions have higher IDs)
+    if (dateComparison === 0) {
+      return Number(b.id) - Number(a.id);
+    }
+    return dateComparison;
+  });
   res.json(sortedTransactions);
 });
 
