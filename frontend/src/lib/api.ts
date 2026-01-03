@@ -64,7 +64,7 @@ export async function getTransactions(): Promise<Transaction[]> {
     return response.json();
 }
 
-export async function addTransanction(transaction: {
+export async function addTransaction(transaction: {
     // Backennd will send back id
     date: string;
     payee: string;
