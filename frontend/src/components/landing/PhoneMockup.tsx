@@ -1,62 +1,5 @@
-import {
-    DollarSign,
-    Wallet,
-    PiggyBank,
-    CreditCard,
-    TrendingUp,
-} from "lucide-react";
+import { TrendingUp } from "lucide-react";
 import { useState } from "react";
-
-interface FloatingBillProps {
-    className?: string;
-    rotation: number;
-    icon?: React.ReactNode;
-    delay?: number;
-    color?: string;
-}
-
-const FloatingBill = ({
-    className,
-    rotation,
-    icon,
-    delay = 0,
-    color = "bg-success/90",
-}: FloatingBillProps) => (
-    <div
-        className={`absolute ${className}`}
-        style={{
-            animation: `floatUnique ${3 + delay * 0.5}s ease-in-out infinite`,
-            animationDelay: `${delay * 200}ms`,
-        }}
-    >
-        <div
-            className={`w-14 h-8 ${color} rounded-md flex items-center justify-center shadow-xl backdrop-blur-sm border border-white/20`}
-            style={{ transform: `rotate(${rotation}deg)` }}
-        >
-            {icon || <DollarSign className="w-5 h-5 text-success-foreground" />}
-        </div>
-    </div>
-);
-
-const FloatingCoin = ({
-    className,
-    delay = 0,
-}: {
-    className?: string;
-    delay?: number;
-}) => (
-    <div
-        className={`absolute ${className}`}
-        style={{
-            animation: `floatCoin ${2.5 + delay * 0.3}s ease-in-out infinite`,
-            animationDelay: `${delay * 150}ms`,
-        }}
-    >
-        <div className="w-8 h-8 bg-warning rounded-full flex items-center justify-center shadow-lg border-2 border-warning/50">
-            <span className="text-warning-foreground font-bold text-sm">$</span>
-        </div>
-    </div>
-);
 
 export const PhoneMockup = () => {
     const [isHovered, setIsHovered] = useState(false);
@@ -68,52 +11,6 @@ export const PhoneMockup = () => {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
-            {/* Floating bills with unique rotations and icons */}
-            <FloatingBill
-                className="-top-8 -left-12"
-                rotation={-15}
-                delay={0}
-                icon={
-                    <DollarSign className="w-5 h-5 text-success-foreground" />
-                }
-            />
-            <FloatingBill
-                className="top-24 -right-20"
-                rotation={25}
-                delay={1}
-                icon={<Wallet className="w-4 h-4 text-success-foreground" />}
-                color="bg-primary/90"
-            />
-            <FloatingBill
-                className="bottom-48 -left-16"
-                rotation={-30}
-                delay={2}
-                icon={<PiggyBank className="w-4 h-4 text-success-foreground" />}
-            />
-            <FloatingBill
-                className="bottom-24 -right-14"
-                rotation={45}
-                delay={3}
-                icon={
-                    <CreditCard className="w-4 h-4 text-primary-foreground" />
-                }
-                color="bg-sidebar-primary/90"
-            />
-            <FloatingBill
-                className="top-56 -left-20"
-                rotation={10}
-                delay={4}
-                icon={
-                    <TrendingUp className="w-4 h-4 text-success-foreground" />
-                }
-            />
-
-            {/* Floating coins */}
-            <FloatingCoin className="-top-4 right-8" delay={0} />
-            <FloatingCoin className="top-40 -right-10" delay={1} />
-            <FloatingCoin className="bottom-16 -left-8" delay={2} />
-            <FloatingCoin className="-bottom-4 right-16" delay={3} />
-
             {/* Phone frame with 3D tilt and hover effect */}
             <div
                 className="relative bg-sidebar rounded-[3rem] p-3 shadow-2xl transition-all duration-700 ease-out"
