@@ -151,7 +151,7 @@ const Landing = () => {
                 variant="outline"
                 className="border-sidebar-muted/50 bg-sidebar-accent/50 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground px-8 py-7 text-lg rounded-xl w-full sm:w-auto"
               >
-                Watch Demo
+                Watch Demo (Work in Progress)
               </Button>
             </div>
             
