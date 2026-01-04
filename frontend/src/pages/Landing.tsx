@@ -52,13 +52,13 @@ const Landing = () => {
   ];
 
   const stats = [
-    { value: "2M+", label: "Active Users" },
+    { value: "3+", label: "Active Users" },
     { value: "$50B+", label: "Money Managed" },
-    { value: "4.8★", label: "App Rating" },
+    { value: "4.5★", label: "Rating in My Heart" },
   ];
 
   return (
-    <div className="min-h-screen bg-sidebar relative overflow-hidden">
+    <div className="min-h-screen bg-sidebar relative overflow-hidden" style={{ fontFamily: '"JetBrains Mono", monospace' }}>
       {/* Animated background gradient orbs */}
       <div className="absolute top-20 left-10 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-pulse" />
       <div className="absolute bottom-40 right-20 w-80 h-80 bg-success/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
