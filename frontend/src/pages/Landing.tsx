@@ -59,10 +59,10 @@ const Landing = () => {
 
   return (
     <div className="min-h-screen bg-sidebar relative overflow-hidden" style={{ fontFamily: '"JetBrains Mono", monospace' }}>
-      {/* Animated background gradient orbs */}
-      <div className="absolute top-20 left-10 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-40 right-20 w-80 h-80 bg-success/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
-      <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-warning/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "2s" }} />
+      {/* Static background gradient orbs - optimized for performance */}
+      <div className="absolute top-20 left-10 w-96 h-96 bg-primary/15 rounded-full blur-2xl" style={{ willChange: 'transform' }} />
+      <div className="absolute bottom-40 right-20 w-80 h-80 bg-success/15 rounded-full blur-2xl" style={{ willChange: 'transform' }} />
+      <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-warning/10 rounded-full blur-2xl" style={{ willChange: 'transform' }} />
       
       {/* Decorative wave shapes */}
       <div className="absolute bottom-0 left-0 right-0 h-[35%] pointer-events-none">
@@ -179,7 +179,7 @@ const Landing = () => {
       </section>
 
       {/* Features Section */}
-      <section className="relative z-10 bg-background/95 backdrop-blur-sm py-24">
+      <section className="relative z-10 bg-background/95 py-24">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
@@ -199,26 +199,6 @@ const Landing = () => {
                 delay={i}
               />
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Trust Section */}
-      <section className="relative z-10 bg-sidebar py-20">
-        <div className="container mx-auto px-6">
-          <div className="flex flex-col md:flex-row items-center justify-center gap-12 md:gap-20">
-            <div className="flex items-center gap-3 text-sidebar-muted">
-              <Zap className="w-6 h-6 text-warning" />
-              <span className="font-medium">Bank-level security</span>
-            </div>
-            <div className="flex items-center gap-3 text-sidebar-muted">
-              <Shield className="w-6 h-6 text-success" />
-              <span className="font-medium">256-bit encryption</span>
-            </div>
-            <div className="flex items-center gap-3 text-sidebar-muted">
-              <Users className="w-6 h-6 text-primary" />
-              <span className="font-medium">Trusted by 2M+ users</span>
-            </div>
           </div>
         </div>
       </section>
