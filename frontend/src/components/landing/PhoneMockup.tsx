@@ -7,43 +7,29 @@ export const PhoneMockup = () => {
     return (
         <div
             className="relative w-[320px] md:w-[400px]"
-            style={{ perspective: "1200px" }}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
-            {/* Phone frame with 3D tilt and hover effect */}
+            {/* Phone frame with simplified hover effect */}
             <div
-                className="relative bg-sidebar rounded-[3rem] p-3 shadow-2xl transition-all duration-700 ease-out"
+                className="relative bg-sidebar rounded-[3rem] p-3 shadow-2xl transition-transform duration-500 ease-out"
                 style={{
                     transform: isHovered
-                        ? "rotateY(0deg) rotateX(0deg) rotateZ(0deg) scale(1.02)"
-                        : "rotateY(-12deg) rotateX(5deg) rotateZ(2deg)",
-                    transformStyle: "preserve-3d",
-                    boxShadow: isHovered
-                        ? "0 50px 100px rgba(0,0,0,0.5), 0 0 60px hsl(var(--primary) / 0.3)"
-                        : "30px 30px 60px rgba(0,0,0,0.4), -5px -5px 20px rgba(255,255,255,0.05)",
+                        ? "scale(1.02)"
+                        : "rotate(2deg)",
+                    willChange: 'transform',
                 }}
             >
                 {/* Edge highlight for 3D effect */}
                 <div
-                    className="absolute inset-0 rounded-[3rem] pointer-events-none transition-opacity duration-500"
-                    style={{
-                        background:
-                            "linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%, rgba(0,0,0,0.1) 100%)",
-                        opacity: isHovered ? 0.5 : 1,
-                    }}
+                    className="absolute inset-0 rounded-[3rem] pointer-events-none bg-gradient-to-br from-white/10 to-transparent"
                 />
 
                 {/* Inner bezel */}
                 <div className="bg-background rounded-[2.5rem] overflow-hidden relative">
                     {/* Screen glare */}
                     <div
-                        className="absolute inset-0 pointer-events-none z-10 transition-opacity duration-500"
-                        style={{
-                            background:
-                                "linear-gradient(115deg, rgba(255,255,255,0.25) 0%, transparent 40%, transparent 100%)",
-                            opacity: isHovered ? 0.8 : 0.5,
-                        }}
+                        className="absolute inset-0 pointer-events-none z-10 bg-gradient-to-br from-white/10 to-transparent"
                     />
 
                     {/* Status bar */}

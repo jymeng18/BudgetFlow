@@ -18,10 +18,9 @@ export const FeatureCard = ({
 }: FeatureCardProps) => {
     return (
         <div
-            className="group relative bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl p-6 hover:bg-card hover:border-primary/30 transition-all duration-500 hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-2 cursor-pointer"
-            style={{ animationDelay: `${delay * 100}ms` }}
+            className="group relative bg-card/80 border border-border/50 rounded-2xl p-6 hover:bg-card hover:border-primary/30 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-2 cursor-pointer"
         >
-            <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
             <div className="relative z-10">
                 {/* Icon */}
