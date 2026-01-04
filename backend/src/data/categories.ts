@@ -1,4 +1,4 @@
-import { CategoriesData } from "../interfaces";
+import { CategoriesData } from "../types/interfaces";
 
 // In memory storage temporarily - move to db later
 export const categories: CategoriesData = {

@@ -16,7 +16,7 @@ import {
   Transaction,
   BudgetType,
   CategoriesData,
-} from "./interfaces";
+} from "./types/interfaces";
 
 // Dummy data every user starts off with
 import { categories } from "./data/categories";
