@@ -23,7 +23,7 @@ function App() {
     <QueryClientProvider client={queryClient}> {/* Provide QueryClient instance to all nested comps */}
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<h1>Landing!</h1>} />
+          <Route path="/" element={<Landing />} />
           <Route path="/app" element={<Index />} />
           <Route path="/reports" element={<h1>Reports!</h1>} />
           <Route path="/ai-insights" element={<h1>AI ins page!</h1>} />
