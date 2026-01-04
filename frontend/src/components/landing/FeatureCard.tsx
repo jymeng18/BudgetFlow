@@ -34,7 +34,7 @@ export const FeatureCard = ({
 
                 <p className="text-sm text-muted-foreground mb-4">{subtitle}</p>
 
-                <div className="flex items-center gap-1 text-primary font-medium text-sm group-hover:gap-2 transition-all duration-300">
+                <div className="flex items-center gap-1 text-primary font-medium text-sm group-hover:gap-2 transition-all duration-300 pb-3">
                     <span>{linkText}</span>
                     <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300" />
                 </div>
