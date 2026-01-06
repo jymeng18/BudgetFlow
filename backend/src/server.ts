@@ -8,7 +8,7 @@
  * Last modified: Dec 2025
  */
 
-import express, { Request, Response, Router } from "express";
+import express from "express";
 import cors from "cors";
 import router from "./routes/routes";
 

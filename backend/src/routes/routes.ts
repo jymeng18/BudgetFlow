@@ -148,6 +148,7 @@ router.delete("/api/transactions/:id", (req: Request, res: Response) => {
     res.status(404).json({
       error: "Transaction not found.",
     });
+    return;
   }
 
   /**
