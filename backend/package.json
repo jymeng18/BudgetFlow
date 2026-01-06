@@ -8,13 +8,12 @@
     "start": "node dist/server.js",
     "dev": "tsx watch src/server.ts"
   },
-
   "dependencies": {
+    "@google/genai": "^1.34.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.2.1"
   },
-
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
