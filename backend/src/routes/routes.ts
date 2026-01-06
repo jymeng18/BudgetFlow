@@ -15,8 +15,22 @@ import {
 } from "../types/interfaces";
 import { categories } from "../data/categories";
 import { transactions } from "../data/transactions";
+import OpenAI from "openai";
 
 const router = express.Router();
+
+// Lazy initialization to ensure env vars are loaded
+let openai: OpenAI;
+function getOpenAI() {
+  if (!openai) {
+    openai = new OpenAI({
+      baseURL: "https://api.deepseek.com",
+      apiKey: process.env.DEEPSEEK_API_KEY,
+    });
+  }
+  return openai;
+}
+
 
 function isValidBudgetType(type: string): type is BudgetType {
   return type === "personal" || type === "shared" || type === "family";
@@ -247,6 +261,31 @@ router.get("/api/summary/:budgetType", (req: Request, res: Response) => {
     totalSpent: totalSpent,
     totalAvailable: totalAvailable,
   });
+});
+
+router.post("/api/generate", async(req: Request, res: Response) => {
+  const { prompt } = req.body;
+
+  if (!prompt) {
+    res.status(400).json({ error: "Prompt is required." });
+    return;
+  }
+
+  try {
+    const completion = await getOpenAI().chat.completions.create({
+      messages: [
+        { role: "system", content: "You are roleplaying as a good friend. Keep answers concise and short." },
+        { role: "user", content: prompt }
+      ],
+      model: "deepseek-chat",
+    });
+
+    const responseText = completion.choices[0]?.message?.content || "No response generated.";
+    res.status(200).json({ response: responseText });
+  } catch (error) {
+    console.error("DeepSeek API error:", error);
+    res.status(500).json({ error: "AI generation failed." });
+  }
 });
 
 export default router;

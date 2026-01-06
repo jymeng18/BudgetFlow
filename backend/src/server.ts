@@ -8,12 +8,14 @@
  * Last modified: Dec 2025
  */
 
+import dotenv from "dotenv"; // LOAD THIS FIRSTTTT
+dotenv.config();
+
 import express from "express";
 import cors from "cors";
 import router from "./routes/routes";
 
 const app = express();
-
 const PORT = 8000;
 
 app.use(cors());
