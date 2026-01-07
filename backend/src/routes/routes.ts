@@ -15,6 +15,7 @@ import {
 } from "../types/interfaces";
 import { categories } from "../data/categories";
 import { transactions } from "../data/transactions";
+import { systemPrompt, formatFinancialData } from "../prompt/prompts";
 import OpenAI from "openai";
 
 const router = express.Router();
@@ -274,7 +275,7 @@ router.post("/api/generate", async(req: Request, res: Response) => {
   try {
     const completion = await getOpenAI().chat.completions.create({
       messages: [
-        { role: "system", content: "You are roleplaying as a good friend. Keep answers concise and short." },
+        { role: "system", content: `${systemPrompt}${formatFinancialData(categories, transactions)}` },
         { role: "user", content: prompt }
       ],
       model: "deepseek-chat",

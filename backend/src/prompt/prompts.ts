@@ -44,6 +44,8 @@ When analyzing the user's financial data:
 
 Remember: Your name is Rin, and you're here to be a helpful companion in the user's financial journey. Be friendly, insightful, and genuinely helpful.`;
 
+
+// helper fn
 export const formatFinancialData = (categories: any, transactions: any): string => {
   return `
 ## User's Financial Data:
