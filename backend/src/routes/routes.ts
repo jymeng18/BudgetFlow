@@ -1,12 +1,12 @@
 /**
  * Filename: routes.ts
- * 
+ *
  * Desc: Routing/Services for Backend Server
- * 
+ *
  * Author: Jerry Meng
  */
 
-import express, { Request, Response } from "express"
+import express, { Request, Response } from "express";
 import {
   BudgetType,
   Category,
@@ -31,7 +31,6 @@ function getOpenAI() {
   }
   return openai;
 }
-
 
 function isValidBudgetType(type: string): type is BudgetType {
   return type === "personal" || type === "shared" || type === "family";
@@ -227,7 +226,7 @@ router.put(
 router.get("/api/summary/:budgetType", (req: Request, res: Response) => {
   const { budgetType } = req.params;
 
-  if(!isValidBudgetType(budgetType)){
+  if (!isValidBudgetType(budgetType)) {
     res.status(404).json({
       message: "Invalid Budget Type.",
     });
@@ -238,19 +237,19 @@ router.get("/api/summary/:budgetType", (req: Request, res: Response) => {
   let totalAvailable = 0;
   let totalBudgeted = 0;
   let totalSpent = 0;
-  
+
   const budgetData = categories[budgetType as keyof CategoriesData];
 
-  for(let group of budgetData){
-    for(let cat of group.categories){
+  for (let group of budgetData) {
+    for (let cat of group.categories) {
       totalAvailable += cat.available;
       totalBudgeted += cat.budgeted;
       totalSpent += cat.spent;
     }
   }
 
-  for(let t of transactions){
-    if(t.type === "income"){
+  for (let t of transactions) {
+    if (t.type === "income") {
       totalIncome += t.amount;
     }
   }
@@ -264,7 +263,7 @@ router.get("/api/summary/:budgetType", (req: Request, res: Response) => {
   });
 });
 
-router.post("/api/generate", async(req: Request, res: Response) => {
+router.post("/api/generate", async (req: Request, res: Response) => {
   const { prompt } = req.body;
 
   if (!prompt) {
@@ -275,18 +274,84 @@ router.post("/api/generate", async(req: Request, res: Response) => {
   try {
     const completion = await getOpenAI().chat.completions.create({
       messages: [
-        { role: "system", content: `${systemPrompt}${formatFinancialData(categories, transactions)}` },
-        { role: "user", content: prompt }
+        {
+          role: "system",
+          content: `${systemPrompt}${formatFinancialData(
+            categories,
+            transactions
+          )}`,
+        },
+        { role: "user", content: prompt },
       ],
       model: "deepseek-chat",
     });
 
-    const responseText = completion.choices[0]?.message?.content || "No response generated.";
+    const responseText =
+      completion.choices[0]?.message?.content || "No response generated.";
     res.status(200).json({ response: responseText });
   } catch (error) {
     console.error("DeepSeek API error:", error);
     res.status(500).json({ error: "AI generation failed." });
   }
+});
+
+// User financial summarized statistics
+router.get("/api/analytics/:budgetType", (req: Request, res: Response) => {
+  const { budgetType } = req.params;
+
+  if (!isValidBudgetType(budgetType)) {
+    res.status(400).json({
+      error: "Invalid budget type.",
+    });
+    return;
+  }
+
+  let totalIncome: number = 0;
+  let totalExpenses: number = 0;
+  let targetsCompleted: number = 0;
+  let criticalTargets: Array<string> = [];
+  let topExpenses: Array<{ name: string; spent: number }> = [];
+
+  for (let t of transactions) {
+    if (t.type === "expense") {
+      totalExpenses += t.amount;
+    } else {
+      totalIncome += t.amount;
+    }
+  }
+
+  // How many budget targets were completed
+  const data = categories[budgetType];
+
+  data.forEach((item) => {
+    const categoryArr = item.categories;
+    categoryArr.forEach((cat) => {
+      if (cat.available === cat.budgeted) {
+        targetsCompleted++;
+      } else if (cat.available < 0) {
+        // List of categories who exceed their budget
+        criticalTargets.push(cat.name);
+      }
+    });
+  });
+
+  data.forEach((item) => {
+    const tmp = [...item.categories].sort((a, b) => b.spent - a.spent);
+    const firstEl = tmp[0];
+    topExpenses.push({ name: firstEl.name, spent: firstEl.spent });
+  });
+
+  // Sort and get top 3 highest expense categories
+  const top3Expenses = topExpenses
+    .sort((a, b) => b.spent - a.spent)
+    .slice(0, 3)
+
+
+
+  // TODO:
+  // Percentage of income not spent
+  // Most frequent category
+  // Average transaction amount (use percentages and graph it out )
 });
 
 export default router;
