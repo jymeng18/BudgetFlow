@@ -135,3 +135,29 @@ export async function getBudgetSummary(
 
     return response.json();
 }
+
+export interface AnalyticsData {
+    budgetType: string;
+    totalIncome: number;
+    totalExpenses: number;
+    netIncome: number;
+    targetsCompleted: number;
+    criticalTargets: string[];
+    top3Expenses: { name: string; spent: number }[];
+    top3Remaining: { name: string; available: number }[];
+    mostFrequentCategory: string;
+    percentageNotSpent: number;
+    averageTransactionAmount: number;
+    totalTransactions: number;
+    expenseTransactions: number;
+}
+
+export async function getAnalytics(budgetType: string): Promise<AnalyticsData> {
+    const response = await fetch(`${API_BASE_URL}/analytics/${budgetType}`);
+
+    if (!response.ok) {
+        throw new Error("Failed to fetch analytics data");
+    }
+
+    return response.json();
+}
