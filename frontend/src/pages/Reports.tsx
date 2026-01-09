@@ -97,8 +97,8 @@ const Reports = () => {
               analytics.totalExpenses,
               Math.max(0, analytics.totalIncome - analytics.totalExpenses),
             ],
-            backgroundColor: ["#ef4444", "#22c55e"],
-            borderColor: ["#ef4444", "#22c55e"],
+            backgroundColor: ["#1e3a8a", "#60a5fa"],
+            borderColor: ["#1e3a8a", "#60a5fa"],
             borderWidth: 2,
           },
         ],
@@ -116,10 +116,17 @@ const Reports = () => {
           padding: 20,
           font: {
             size: 12,
+            family: '"JetBrains Mono", monospace',
           },
         },
       },
       tooltip: {
+        titleFont: {
+          family: '"JetBrains Mono", monospace',
+        },
+        bodyFont: {
+          family: '"JetBrains Mono", monospace',
+        },
         callbacks: {
           label: (context: { label: string; raw: unknown }) => {
             const value = context.raw as number;
@@ -147,7 +154,7 @@ const Reports = () => {
               0,
               0,
             ],
-            backgroundColor: "#ef4444",
+            backgroundColor: "#1e3a8a",
             borderRadius: 4,
           },
           {
@@ -158,7 +165,7 @@ const Reports = () => {
               0,
               ...analytics.top3Remaining.map((r) => r.available),
             ],
-            backgroundColor: "#22c55e",
+            backgroundColor: "#60a5fa",
             borderRadius: 4,
           },
         ],
@@ -177,10 +184,17 @@ const Reports = () => {
           padding: 20,
           font: {
             size: 12,
+            family: '"JetBrains Mono", monospace',
           },
         },
       },
       tooltip: {
+        titleFont: {
+          family: '"JetBrains Mono", monospace',
+        },
+        bodyFont: {
+          family: '"JetBrains Mono", monospace',
+        },
         callbacks: {
           label: (context: { dataset: { label?: string }; raw: unknown }) => {
             const value = context.raw as number;
@@ -197,6 +211,9 @@ const Reports = () => {
         },
         ticks: {
           color: "hsl(var(--muted-foreground))",
+          font: {
+            family: '"JetBrains Mono", monospace',
+          },
           callback: function (tickValue: string | number) {
             const value =
               typeof tickValue === "string"
@@ -214,6 +231,7 @@ const Reports = () => {
           color: "hsl(var(--foreground))",
           font: {
             size: 11,
+            family: '"JetBrains Mono", monospace',
           },
         },
       },
@@ -231,7 +249,7 @@ const Reports = () => {
               analytics.expenseTransactions,
               analytics.totalTransactions - analytics.expenseTransactions,
             ],
-            backgroundColor: ["#ef4444", "#22c55e"],
+            backgroundColor: ["#1e3a8a", "#60a5fa"],
             borderRadius: 6,
             barThickness: 60,
           },
@@ -247,6 +265,12 @@ const Reports = () => {
         display: false,
       },
       tooltip: {
+        titleFont: {
+          family: '"JetBrains Mono", monospace',
+        },
+        bodyFont: {
+          family: '"JetBrains Mono", monospace',
+        },
         callbacks: {
           label: (context: { raw: unknown }) => {
             return `Count: ${context.raw}`;
@@ -263,6 +287,7 @@ const Reports = () => {
           color: "hsl(var(--foreground))",
           font: {
             size: 12,
+            family: '"JetBrains Mono", monospace',
           },
         },
       },
@@ -272,6 +297,9 @@ const Reports = () => {
         },
         ticks: {
           color: "hsl(var(--muted-foreground))",
+          font: {
+            family: '"JetBrains Mono", monospace',
+          },
           stepSize: 1,
         },
         beginAtZero: true,
