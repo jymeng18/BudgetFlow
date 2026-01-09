@@ -356,7 +356,7 @@ const Reports = () => {
     <div className="flex min-h-screen bg-background">
       <Sidebar />
 
-      <main className="flex-1 p-6 lg:p-8 overflow-auto">
+      <main className="flex-1 p-6 lg:p-8 overflow-auto ml-64">
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
