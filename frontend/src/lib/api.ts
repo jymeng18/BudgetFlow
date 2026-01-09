@@ -161,3 +161,23 @@ export async function getAnalytics(budgetType: string): Promise<AnalyticsData> {
 
     return response.json();
 }
+
+export interface ChatResponse {
+    response: string;
+}
+
+export async function sendChatMessage(prompt: string): Promise<ChatResponse> {
+    const response = await fetch(`${API_BASE_URL}/generate`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ prompt }),
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to get AI response");
+    }
+
+    return response.json();
+}
