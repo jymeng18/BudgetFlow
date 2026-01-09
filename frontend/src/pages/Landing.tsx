@@ -90,8 +90,8 @@ const Landing = () => {
       <nav className="relative z-20 container mx-auto px-6 py-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-primary to-success rounded-xl flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-lg">B</span>
+            <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center p-2 shadow-sm">
+              <img src="/logo_budgetflow.svg" alt="BudgetFlow Logo" className="w-full h-full" />
             </div>
             <span className="text-xl font-bold text-sidebar-foreground">BudgetFlow</span>
           </div>
@@ -228,8 +228,8 @@ const Landing = () => {
         <div className="container mx-auto px-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-primary to-success rounded-lg flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-sm">B</span>
+              <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center p-1.5 shadow-sm">
+                <img src="/logo_budgetflow.svg" alt="BudgetFlow Logo" className="w-full h-full" />
               </div>
               <span className="text-sidebar-foreground font-semibold">BudgetFlow</span>
             </div>
