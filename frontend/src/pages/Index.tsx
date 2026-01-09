@@ -156,48 +156,51 @@ const Index = () => {
     );
 
     return (
-        <div className="flex h-screen w-full bg-background">
-            <Sidebar />
+      <div
+        className="flex h-screen w-full bg-background"
+        style={{ fontFamily: '"JetBrains Mono", monospace' }}
+      >
+        <Sidebar />
 
-            <div className="flex-1 flex flex-col min-w-0 ml-64">
-                <BudgetHeader
-                    month={months[currentMonth]}
-                    year={currentYear}
-                    onPrevMonth={handlePrevMonth}
-                    onNextMonth={handleNextMonth}
-                    onAddTransaction={handleAddTransaction}
-                />
+        <div className="flex-1 flex flex-col min-w-0 ml-64">
+          <BudgetHeader
+            month={months[currentMonth]}
+            year={currentYear}
+            onPrevMonth={handlePrevMonth}
+            onNextMonth={handleNextMonth}
+            onAddTransaction={handleAddTransaction}
+          />
 
-                <div className="px-6 py-3 border-b border-border bg-card">
-                    <BudgetTypeTabs
-                        activeType={budgetType}
-                        onTypeChange={setBudgetType}
-                    />
-                </div>
-
-                <BudgetSummary items={summaryItems} />
-
-                <div className="flex-1 flex min-h-0">
-                    <BudgetTable
-                        budgetType={budgetType}
-                        categoryGroups={categoryGroups}
-                        onDataChange={fetchData}
-                    />
-                    <RecentTransactions
-                        transactions={transactions}
-                        onTransactionDeleted={fetchData}
-                    />
-                </div>
-            </div>
-
-            {/* Add Transaction Modal */}
-            <AddTransactionModal
-                open={isTransactionModalOpen}
-                onOpenChange={setIsTransactionModalOpen}
-                onSave={handleSaveTransaction}
-                categories={categories}
+          <div className="px-6 py-3 border-b border-border bg-card">
+            <BudgetTypeTabs
+              activeType={budgetType}
+              onTypeChange={setBudgetType}
             />
+          </div>
+
+          <BudgetSummary items={summaryItems} />
+
+          <div className="flex-1 flex min-h-0">
+            <BudgetTable
+              budgetType={budgetType}
+              categoryGroups={categoryGroups}
+              onDataChange={fetchData}
+            />
+            <RecentTransactions
+              transactions={transactions}
+              onTransactionDeleted={fetchData}
+            />
+          </div>
         </div>
+
+        {/* Add Transaction Modal */}
+        <AddTransactionModal
+          open={isTransactionModalOpen}
+          onOpenChange={setIsTransactionModalOpen}
+          onSave={handleSaveTransaction}
+          categories={categories}
+        />
+      </div>
     );
 };
 

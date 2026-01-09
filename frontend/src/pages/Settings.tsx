@@ -44,90 +44,77 @@ export default function Settings() {
     };
 
     return (
-        <div className="flex min-h-screen bg-background">
-            <Sidebar />
+      <div
+        className="flex min-h-screen bg-background"
+        style={{ fontFamily: '"JetBrains Mono", monospace' }}
+      >
+        <Sidebar />
 
-            <main className="flex-1 p-8 overflow-auto ml-64">
-                <div className="max-w-2xl mx-auto space-y-6">
-                    <div>
-                        <h1 className="text-2xl font-semibold text-foreground">
-                            Settings
-                        </h1>
-                        <p className="text-muted-foreground mt-1">
-                            Manage your account preferences
-                        </p>
-                    </div>
+        <main className="flex-1 p-8 overflow-auto ml-64">
+          <div className="max-w-2xl mx-auto space-y-6">
+            <div>
+              <h1 className="text-2xl font-semibold text-foreground">
+                Settings
+              </h1>
+              <p className="text-muted-foreground mt-1">
+                Manage your account preferences
+              </p>
+            </div>
 
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="text-lg">
-                                Appearance
-                            </CardTitle>
-                            <CardDescription>
-                                Customize how the app looks
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="flex items-center justify-between">
-                                <div className="space-y-1">
-                                    <Label className="text-sm font-medium">
-                                        Dark Mode
-                                    </Label>
-                                    <p className="text-sm text-muted-foreground">
-                                        Switch between light and dark theme
-                                    </p>
-                                </div>
-                                <ThemeToggle
-                                    isDark={isDark}
-                                    onToggle={handleThemeToggle}
-                                />
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                
-                    <Card>
-                        <CardHeader>
-                            <div className="flex items-center gap-2">
-                                <User className="w-5 h-5 text-muted-foreground" />
-                                <CardTitle className="text-lg">
-                                    Profile
-                                </CardTitle>
-                            </div>
-                            <CardDescription>
-                                Your personal information
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="firstName">
-                                        First Name
-                                    </Label>
-                                    <Input id="firstName" placeholder="John" />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="lastName">Last Name</Label>
-                                    <Input id="lastName" placeholder="Doe" />
-                                </div>
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="email">Email</Label>
-                                <Input
-                                    id="email"
-                                    type="email"
-                                    placeholder="john@example.com"
-                                />
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    {/* Save Button */}
-                    <div className="flex justify-end pt-4">
-                        <Button>Save Changes</Button>
-                    </div>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Appearance</CardTitle>
+                <CardDescription>Customize how the app looks</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <Label className="text-sm font-medium">Dark Mode</Label>
+                    <p className="text-sm text-muted-foreground">
+                      Switch between light and dark theme
+                    </p>
+                  </div>
+                  <ThemeToggle isDark={isDark} onToggle={handleThemeToggle} />
                 </div>
-            </main>
-        </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <div className="flex items-center gap-2">
+                  <User className="w-5 h-5 text-muted-foreground" />
+                  <CardTitle className="text-lg">Profile</CardTitle>
+                </div>
+                <CardDescription>Your personal information</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="firstName">First Name</Label>
+                    <Input id="firstName" placeholder="John" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="lastName">Last Name</Label>
+                    <Input id="lastName" placeholder="Doe" />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="john@example.com"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Save Button */}
+            <div className="flex justify-end pt-4">
+              <Button>Save Changes</Button>
+            </div>
+          </div>
+        </main>
+      </div>
     );
 }

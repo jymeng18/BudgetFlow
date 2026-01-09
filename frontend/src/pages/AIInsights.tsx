@@ -40,7 +40,10 @@ const AIInsights = () => {
   ];
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div
+      className="flex min-h-screen bg-background"
+      style={{ fontFamily: '"JetBrains Mono", monospace' }}
+    >
       <Sidebar />
 
       <main className="flex-1 p-6 lg:p-8 overflow-auto ml-64">
@@ -113,7 +116,7 @@ const AIInsights = () => {
               {/* Notes */}
               <div className="mt-8 p-4 rounded-lg bg-muted/50 border border-border">
                 <p className="text-sm text-muted-foreground text-center">
-                    Our AI Assistant utilizes DeepSeek's V3 Model! 
+                  Our AI Assistant utilizes DeepSeek's V3 Model!
                 </p>
               </div>
             </CardContent>

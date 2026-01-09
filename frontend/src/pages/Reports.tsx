@@ -353,7 +353,10 @@ const Reports = () => {
     : [];
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div
+      className="flex min-h-screen bg-background"
+      style={{ fontFamily: '"JetBrains Mono", monospace' }}
+    >
       <Sidebar />
 
       <main className="flex-1 p-6 lg:p-8 overflow-auto ml-64">
@@ -400,12 +403,12 @@ const Reports = () => {
               {kpiCards.map((kpi, index) => (
                 <Card key={index} className="border-border">
                   <CardContent className="p-4">
-                    <div className="flex items-center gap-3">
-                      <div className={cn("p-2 rounded-lg", kpi.bgColor)}>
+                    <div className="space-y-3">
+                      <div className={cn("p-2 rounded-lg w-fit", kpi.bgColor)}>
                         <kpi.icon className={cn("w-4 h-4", kpi.color)} />
                       </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-xs text-muted-foreground truncate">
+                      <div className="space-y-1">
+                        <p className="text-xs text-muted-foreground leading-tight break-words">
                           {kpi.title}
                         </p>
                         <p
@@ -414,6 +417,7 @@ const Reports = () => {
                             kpi.title === "Net Income" && kpi.color,
                             kpi.title === "Most Frequent" && "text-foreground"
                           )}
+                          title={kpi.value}
                         >
                           {kpi.value}
                         </p>
