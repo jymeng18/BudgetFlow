@@ -43,24 +43,25 @@ export function CategoryRow({ category, onClick }: CategoryRowProps) {
                     </div>
                 </div>
             </div>
-            <div className="flex items-center justify-end">
-                <span className="text-sm text-muted-foreground">
+            <div className="flex items-center justify-end min-w-0">
+                <span className="text-sm text-muted-foreground truncate" title={formatCurrency(budgeted)}>
                     {formatCurrency(budgeted)}
                 </span>
             </div>
-            <div className="flex items-center justify-end">
-                <span className="text-sm text-muted-foreground">
+            <div className="flex items-center justify-end min-w-0">
+                <span className="text-sm text-muted-foreground truncate" title={formatCurrency(spent)}>
                     {formatCurrency(spent)}
                 </span>
             </div>
-            <div className="flex items-center justify-end">
+            <div className="flex items-center justify-end min-w-0">
                 <span
                     className={cn(
-                        "text-sm font-medium px-2 py-0.5 rounded",
+                        "text-sm font-medium px-2 py-0.5 rounded truncate",
                         available >= 0
                             ? "text-success bg-success/10"
                             : "text-destructive bg-destructive/10"
                     )}
+                    title={`${available < 0 ? "-" : ""}${formatCurrency(available)}`}
                 >
                     {available < 0 && "-"}
                     {formatCurrency(available)}

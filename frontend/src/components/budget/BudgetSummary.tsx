@@ -23,13 +23,13 @@ export function BudgetSummary({ items }: BudgetSummaryProps) {
             <div className="flex items-center gap-8">
                 {items.map((item, index) => (
                     <div key={item.label} className="flex items-center gap-6">
-                        <div>
+                        <div className="min-w-0">
                             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
                                 {item.label}
                             </p>
                             <p
                                 className={cn(
-                                    "text-xl font-semibold mt-0.5",
+                                    "text-xl font-semibold mt-0.5 truncate",
                                     item.type === "income" && "text-success",
                                     item.type === "expense" &&
                                         "text-foreground",
@@ -38,6 +38,7 @@ export function BudgetSummary({ items }: BudgetSummaryProps) {
                                         ? "text-success"
                                         : "text-destructive"
                                 )}
+                                title={`${item.amount < 0 ? "-" : ""}${formatCurrency(item.amount)}`}
                             >
                                 {item.amount < 0 && "-"}
                                 {formatCurrency(item.amount)}

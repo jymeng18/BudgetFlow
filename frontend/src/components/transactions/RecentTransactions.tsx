@@ -74,15 +74,16 @@ export function RecentTransactions({
                                         <span className="text-sm font-medium truncate">
                                             {transaction.payee}
                                         </span>
-                                        <div className="flex items-center gap-2">
+                                        <div className="flex items-center gap-2 min-w-0">
                                             <span
                                                 className={cn(
-                                                    "text-sm font-medium flex-shrink-0",
+                                                    "text-sm font-medium truncate",
                                                     transaction.type ===
                                                         "income"
                                                         ? "text-success"
                                                         : "text-foreground"
                                                 )}
+                                                title={`${transaction.type === "income" ? "+" : "-"}${formatCurrency(transaction.amount)}`}
                                             >
                                                 {transaction.type === "income"
                                                     ? "+"
