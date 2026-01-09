@@ -73,7 +73,13 @@ const AIInsights = () => {
     setIsLoading(true);
 
     try {
-      const response = await sendChatMessage(textToSend);
+      // Build conversation history (exclude system messages, only user/assistant)
+      const conversationHistory = messages.map(msg => ({
+        role: msg.role,
+        content: msg.content
+      }));
+
+      const response = await sendChatMessage(textToSend, conversationHistory);
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",

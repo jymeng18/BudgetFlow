@@ -264,7 +264,7 @@ router.get("/api/summary/:budgetType", (req: Request, res: Response) => {
 });
 
 router.post("/api/generate", async (req: Request, res: Response) => {
-  const { prompt } = req.body;
+  const { prompt, messages: conversationHistory } = req.body;
 
   if (!prompt) {
     res.status(400).json({ error: "Prompt is required." });
@@ -272,17 +272,25 @@ router.post("/api/generate", async (req: Request, res: Response) => {
   }
 
   try {
+    const messages: Array<{ role: "system" | "user" | "assistant"; content: string }> = [
+      {
+        role: "system",
+        content: `${systemPrompt}${formatFinancialData(
+          categories,
+          transactions
+        )}`,
+      },
+    ];
+
+    // Add conversation history if provided
+    if (conversationHistory && Array.isArray(conversationHistory)) {
+      messages.push(...conversationHistory);
+    }
+
+    messages.push({ role: "user", content: prompt });
+
     const completion = await getOpenAI().chat.completions.create({
-      messages: [
-        {
-          role: "system",
-          content: `${systemPrompt}${formatFinancialData(
-            categories,
-            transactions
-          )}`,
-        },
-        { role: "user", content: prompt },
-      ],
+      messages,
       model: "deepseek-chat",
     });
 

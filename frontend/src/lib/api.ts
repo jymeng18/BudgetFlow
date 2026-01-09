@@ -166,13 +166,24 @@ export interface ChatResponse {
     response: string;
 }
 
-export async function sendChatMessage(prompt: string): Promise<ChatResponse> {
+export interface ChatMessage {
+    role: "user" | "assistant";
+    content: string;
+}
+
+export async function sendChatMessage(
+    prompt: string,
+    conversationHistory?: ChatMessage[]
+): Promise<ChatResponse> {
     const response = await fetch(`${API_BASE_URL}/generate`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ prompt }),
+        body: JSON.stringify({ 
+            prompt,
+            messages: conversationHistory || []
+        }),
     });
 
     if (!response.ok) {
