@@ -1,0 +1,14 @@
+Supabase Auth: User login, sign up, sign out, must handle user specific data, 
+ensure user can still use the apps functionality as guest mode, no account needed
+-User should be able to delete account
+
+For every transaction user does: the page should use a scroll animation to go to 
+whichever category was updated or modified
+    - Can also create notifications on the top of the page
+    - Also change the color of the transactions
+
+Chatbot: 
+    websearches - currently not available with deepseek api, must use some alternative
+
+
+
