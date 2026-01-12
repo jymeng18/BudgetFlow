@@ -41,16 +41,21 @@ ALTER TABLE transactions ENABLE ROW LEVEL SECURITY;
 
 -- Users can only see their own data
 CREATE POLICY "Users can manage own profile" ON profiles
-  FOR ALL USING (auth.uid() = id);
+  FOR ALL
+  USING ((SELECT auth.uid()) = id);
 
 CREATE POLICY "Users see own categories" ON categories
-  FOR SELECT USING (auth.uid() = user_id);
+  FOR SELECT
+  USING ((SELECT auth.uid()) = user_id);
 
 CREATE POLICY "Users insert own categories" ON categories
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
+  FOR INSERT
+  WITH CHECK ((SELECT auth.uid()) = user_id);
 
 CREATE POLICY "Users see own transactions" ON transactions
-  FOR SELECT USING (auth.uid() = user_id);
+  FOR SELECT
+  USING ((SELECT auth.uid()) = user_id);
 
 CREATE POLICY "Users insert own transactions" ON transactions
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
+  FOR INSERT
+  WITH CHECK ((SELECT auth.uid()) = user_id);
