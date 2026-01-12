@@ -9,13 +9,6 @@
 import { BudgetType, Category } from "../types/interfaces";
 import { categories } from "../data/categories";
 import OpenAI from "openai";
-import { createClient } from "@supabase/supabase-js";
-
-// Supabase client
-// export const supabase = createClient(
-//   process.env.SUPABASE_URL as string,
-//   process.env.SUPABASE_SERVICE_ROLE_KEY as string
-// );
 
 // Lazy initialization to ensure env vars are loaded
 let openai: OpenAI;
