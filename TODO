@@ -1,6 +1,10 @@
-Supabase Auth: User login, sign up, sign out, must handle user specific data, 
-ensure user can still use the apps functionality as guest mode, no account needed
--User should be able to delete account
+Supabase Auth: 
+    -User login, 
+    -sign up, (done)
+    -sign out, 
+    -must handle user specific data, 
+    -ensure user can still use the apps functionality as guest mode, no account needed
+    -User should be able to delete account
 
 For every transaction user does: the page should use a scroll animation to go to 
 whichever category was updated or modified

@@ -9,7 +9,6 @@
 import express, { Request, Response } from "express";
 import { supabase } from "../server";
 import validator from "validator";
-import { error } from "node:console";
 
 const router = express.Router();
 
@@ -34,7 +33,7 @@ router.post("/api/auth/signUp", async (req: Request, res: Response) => {
     return;
   }
 
-  if(password.length < 4){
+  if(password.length < 6){
     res.status(400).json({
       message: "Password must be at least 4 characters long."
     });
@@ -51,6 +50,19 @@ router.post("/api/auth/signUp", async (req: Request, res: Response) => {
     if(error){
       res.status(400).json({
         message: error.message
+      });
+      return;
+    }
+
+    const { error: profileError } = await supabase
+      .from('profiles')
+      .insert({
+        id: data.user?.id,
+      });
+    
+    if(profileError){
+      res.status(400).json({
+        message: profileError.message
       });
       return;
     }
@@ -137,7 +149,7 @@ router.post("/api/auth/signOut", async (req: Request, res: Response) => {
     });
   } 
 
-  catch {
+  catch(error) {
     console.log("SignOut Error:", error);
     res.status(500).json({
       message: "An unexpected error occurred during signup.",
