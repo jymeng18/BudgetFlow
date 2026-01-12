@@ -140,10 +140,6 @@ const AIInsights = () => {
                   <CardTitle className="text-2xl">
                     Ask me anything about your finances
                   </CardTitle>
-                  <CardDescription className="text-base">
-                    I can analyze your spending patterns, suggest savings
-                    opportunities, and help you reach your financial goals.
-                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   {/* Prompt Input */}
