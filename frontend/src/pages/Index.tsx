@@ -135,10 +135,7 @@ const Index = () => {
     // Handle saving a new transaction to the backend
     const handleSaveTransaction = async (transaction: TransactionData) => {
         try {
-            await addTransaction({
-                ...transaction,
-                budgetType,
-            });
+            await addTransaction(transaction);
             // Refresh data after adding transaction
             fetchData();
         } catch (error) {
