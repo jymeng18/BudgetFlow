@@ -1,14 +1,16 @@
 import { ArrowDownLeft, ArrowUpRight, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { deleteTransaction, type Transaction } from "@/lib/api";
+import { deleteTransaction, type Transaction, type CategoryGroup } from "@/lib/api";
 
 interface RecentTransactionsProps {
     transactions: Transaction[];
+    categoryGroups: CategoryGroup[];
     onTransactionDeleted: () => void;
 }
 
 export function RecentTransactions({
     transactions,
+    categoryGroups,
     onTransactionDeleted,
 }: RecentTransactionsProps) {
     const formatCurrency = (amount: number) => {
@@ -25,6 +27,16 @@ export function RecentTransactions({
             month: "short",
             day: "numeric",
         });
+    };
+
+    // Get category name from ID
+    const getCategoryName = (categoryId: string | null): string => {
+        if (!categoryId) return "Uncategorized";
+        for (const group of categoryGroups) {
+            const category = group.categories.find((cat) => cat.id === categoryId);
+            if (category) return category.name;
+        }
+        return "Uncategorized";
     };
 
     // Handle deleting a transaction
@@ -104,7 +116,7 @@ export function RecentTransactions({
                                     </div>
                                     <div className="flex items-center justify-between gap-2 mt-0.5">
                                         <span className="text-xs text-muted-foreground truncate">
-                                            {transaction.categoryId}
+                                            {getCategoryName(transaction.categoryId)}
                                         </span>
                                         <span className="text-xs text-muted-foreground flex-shrink-0">
                                             {formatDate(transaction.date)}

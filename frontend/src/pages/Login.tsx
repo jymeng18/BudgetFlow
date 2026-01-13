@@ -64,6 +64,9 @@ const Login = () => {
         localStorage.setItem("access_token", response.session.access_token);
         localStorage.setItem("refresh_token", response.session.refresh_token);
       }
+      if (response.user) {
+        localStorage.setItem("user_id", response.user.id);
+      }
       
       navigate("/app");
     } catch (err) {

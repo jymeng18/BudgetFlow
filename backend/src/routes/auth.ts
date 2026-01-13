@@ -9,6 +9,10 @@
 import express, { Request, Response } from "express";
 import { supabase } from "../server";
 import validator from "validator";
+import {
+  generateUserCategories,
+  generateUserTransactions,
+} from "../data/seedData";
 
 const router = express.Router();
 
@@ -35,7 +39,7 @@ router.post("/api/auth/signUp", async (req: Request, res: Response) => {
 
   if(password.length < 6){
     res.status(400).json({
-      message: "Password must be at least 4 characters long."
+      message: "Password must be at least 6 characters long."
     });
     return;
   }
@@ -54,15 +58,51 @@ router.post("/api/auth/signUp", async (req: Request, res: Response) => {
       return;
     }
 
+    const userId = data.user?.id;
+    if (!userId) {
+      res.status(400).json({
+        message: "Failed to create user"
+      });
+      return;
+    }
+
     const { error: profileError } = await supabase
       .from('profiles')
       .insert({
-        id: data.user?.id,
+        id: userId,
       });
     
     if(profileError){
       res.status(400).json({
         message: profileError.message
+      });
+      return;
+    }
+
+    // Seed default categories for new user
+    const userCategories = generateUserCategories(userId);
+    const { error: categoriesError } = await supabase
+      .from('categories')
+      .insert(userCategories);
+
+    if (categoriesError) {
+      console.error("Categories seed error:", categoriesError);
+      res.status(400).json({
+        message: categoriesError.message
+      });
+      return;
+    }
+
+    // Seed default transactions for new user
+    const userTransactions = generateUserTransactions(userId, userCategories);
+    const { error: transactionsError } = await supabase
+      .from('transactions')
+      .insert(userTransactions);
+
+    if (transactionsError) {
+      console.error("Transactions seed error:", transactionsError);
+      res.status(400).json({
+        message: transactionsError.message
       });
       return;
     }
@@ -100,7 +140,7 @@ router.post("/api/auth/login", async (req: Request, res: Response) => {
 
   if (password.length < 6) {
     res.status(400).json({
-      message: "Password must be at least 4 characters long.",
+      message: "Password must be at least 6 characters long.",
     });
     return;
   }
@@ -118,7 +158,7 @@ router.post("/api/auth/login", async (req: Request, res: Response) => {
       return;
     }
     
-    res.status(201).json({
+    res.status(200).json({
       message: "User successfully logged in.",
       user: data.user,
       session: {
@@ -131,7 +171,7 @@ router.post("/api/auth/login", async (req: Request, res: Response) => {
   catch(error){
     console.log("Sign in error: ", error);
     res.status(500).json({
-      message: "An unexpected error occurred during signup.",
+      message: "An unexpected error occurred during login.",
     });
   }
 });
@@ -147,15 +187,15 @@ router.post("/api/auth/signOut", async (req: Request, res: Response) => {
       return;
     }
 
-    res.status(201).json({
-      mesasge: "User logged out successfully.",
+    res.status(200).json({
+      message: "User logged out successfully.",
     });
   } 
 
   catch(error) {
     console.log("SignOut Error:", error);
     res.status(500).json({
-      message: "An unexpected error occurred during signup.",
+      message: "An unexpected error occurred during signout.",
     });
   }
 });

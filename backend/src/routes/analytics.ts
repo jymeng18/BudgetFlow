@@ -7,168 +7,220 @@
  */
 
 import express, { Request, Response } from "express";
-import { CategoriesData } from "../types/interfaces";
-import { categories } from "../data/categories";
-import { transactions } from "../data/transactions";
+import { supabase } from "../server";
+import { authenticateUser } from "../middleware/authMiddleware";
 import { isValidBudgetType } from "./utils";
 
 const router = express.Router();
 
 // Just the total stats of your finances
-router.get("/api/summary/:budgetType", (req: Request, res: Response) => {
-  const { budgetType } = req.params;
+router.get(
+  "/api/summary/:budgetType",
+  authenticateUser,
+  async (req: Request, res: Response) => {
+    const { budgetType } = req.params;
+    const userId = req.userId;
 
-  if (!isValidBudgetType(budgetType)) {
-    res.status(404).json({
-      message: "Invalid Budget Type.",
-    });
-    return;
-  }
+    if (!isValidBudgetType(budgetType)) {
+      res.status(404).json({
+        message: "Invalid Budget Type.",
+      });
+      return;
+    }
 
-  let totalIncome = 0;
-  let totalAvailable = 0;
-  let totalBudgeted = 0;
-  let totalSpent = 0;
+    try {
+      // Get categories for this budget type
+      const { data: categoriesData, error: catError } = await supabase
+        .from("categories")
+        .select("budgeted, spent, available")
+        .eq("user_id", userId)
+        .eq("budget_type", budgetType);
 
-  const budgetData = categories[budgetType as keyof CategoriesData];
+      if (catError) {
+        res.status(500).json({ error: catError.message });
+        return;
+      }
 
-  for (let group of budgetData) {
-    for (let cat of group.categories) {
-      totalAvailable += cat.available;
-      totalBudgeted += cat.budgeted;
-      totalSpent += cat.spent;
+      // Get income transactions
+      const { data: transactionsData, error: txError } = await supabase
+        .from("transactions")
+        .select("amount, type")
+        .eq("user_id", userId)
+        .eq("type", "income");
+
+      if (txError) {
+        res.status(500).json({ error: txError.message });
+        return;
+      }
+
+      let totalIncome = 0;
+      let totalAvailable = 0;
+      let totalBudgeted = 0;
+      let totalSpent = 0;
+
+      for (const cat of categoriesData) {
+        totalAvailable += parseFloat(cat.available);
+        totalBudgeted += parseFloat(cat.budgeted);
+        totalSpent += parseFloat(cat.spent);
+      }
+
+      for (const t of transactionsData) {
+        totalIncome += parseFloat(t.amount);
+      }
+
+      res.status(200).json({
+        budgetType: budgetType,
+        totalIncome: totalIncome,
+        totalBudgeted: totalBudgeted,
+        totalSpent: totalSpent,
+        totalAvailable: totalAvailable,
+      });
+    } catch (error) {
+      console.error("Summary error:", error);
+      res.status(500).json({ error: "Failed to fetch summary" });
     }
   }
-
-  for (let t of transactions) {
-    if (t.type === "income") {
-      totalIncome += t.amount;
-    }
-  }
-
-  res.status(200).json({
-    budgetType: budgetType,
-    totalIncome: totalIncome,
-    totalBudgeted: totalBudgeted,
-    totalSpent: totalSpent,
-    totalAvailable: totalAvailable,
-  });
-});
+);
 
 // User financial summarized statistics
-router.get("/api/analytics/:budgetType", (req: Request, res: Response) => {
-  const { budgetType } = req.params;
+router.get(
+  "/api/analytics/:budgetType",
+  authenticateUser,
+  async (req: Request, res: Response) => {
+    const { budgetType } = req.params;
+    const userId = req.userId;
 
-  if (!isValidBudgetType(budgetType)) {
-    res.status(400).json({
-      error: "Invalid budget type.",
-    });
-    return;
-  }
-
-  let totalIncome: number = 0;
-  let totalExpenses: number = 0;
-  let targetsCompleted: number = 0;
-  let criticalTargets: Array<string> = []; // targets that have 0$ available to spend
-  let topExpenses: Array<{ name: string; spent: number }> = [];
-  let topRemaining: Array<{ name: string; available: number}> = [];
-  let mostFrequentCat: string = '';
-
-  for (let t of transactions) {
-    if (t.type === "expense") {
-      totalExpenses += t.amount;
-    } else {
-      totalIncome += t.amount;
+    if (!isValidBudgetType(budgetType)) {
+      res.status(400).json({
+        error: "Invalid budget type.",
+      });
+      return;
     }
-  }
 
-  const data = categories[budgetType];
+    try {
+      // Get categories for this budget type
+      const { data: categoriesData, error: catError } = await supabase
+        .from("categories")
+        .select("*")
+        .eq("user_id", userId)
+        .eq("budget_type", budgetType);
 
-  data.forEach((item) => {
-    const categoryArr = item.categories;
-    categoryArr.forEach((cat) => {
-      if (cat.available === cat.budgeted) {
-        targetsCompleted++;
-      } else if (cat.available < 0) {
-        // List of categories who exceed their budget
-        criticalTargets.push(cat.name);
+      if (catError) {
+        res.status(500).json({ error: catError.message });
+        return;
       }
-    });
-  });
 
-  data.forEach((item) => {
-    const tmp = [...item.categories].sort((a, b) => b.spent - a.spent);
-    const firstEl = tmp[0];
-    topExpenses.push({ name: firstEl.name, spent: firstEl.spent });
-  });
+      // Get all transactions
+      const { data: transactionsData, error: txError } = await supabase
+        .from("transactions")
+        .select("*")
+        .eq("user_id", userId);
 
-  const top3Expenses = topExpenses
-    .sort((a, b) => b.spent - a.spent)
-    .slice(0, 3);
-
-  // Categories with most remaining funds
-  data.forEach((item) => {
-    const tmp = [...item.categories].sort((a, b) => b.available - a.available);
-    const firstEl = tmp[0];
-    topRemaining.push({ name: firstEl.name, available: firstEl.available });
-  });
-
-  const top3Remaining = topRemaining
-    .sort((a, b) => b.available - a.available)
-    .slice(0, 3);
-
-  // Most frequent category (by number of transactions)
-  const categoryCount: Record<string, number> = {};
-  transactions.forEach((t) => {
-    if (t.type === "expense") {
-      categoryCount[t.categoryId] = (categoryCount[t.categoryId] || 0) + 1;
-    }
-  });
-
-  let maxCount = 0;
-  let mostFrequentCatId = '';
-  Object.entries(categoryCount).forEach(([catId, count]) => {
-    if (count > maxCount) {
-      maxCount = count;
-      mostFrequentCatId = catId;
-    }
-  });
-
-  // Find the category name from ID
-  if (mostFrequentCatId) {
-    data.forEach((group) => {
-      const foundCat = group.categories.find(cat => cat.id === mostFrequentCatId);
-      if (foundCat) {
-        mostFrequentCat = foundCat.name;
+      if (txError) {
+        res.status(500).json({ error: txError.message });
+        return;
       }
-    });
+
+      let totalIncome = 0;
+      let totalExpenses = 0;
+      let targetsCompleted = 0;
+      let criticalTargets: string[] = [];
+      let topExpenses: { name: string; spent: number }[] = [];
+      let topRemaining: { name: string; available: number }[] = [];
+      let mostFrequentCat = "";
+
+      // Calculate income and expenses from transactions
+      for (const t of transactionsData) {
+        if (t.type === "expense") {
+          totalExpenses += parseFloat(t.amount);
+        } else {
+          totalIncome += parseFloat(t.amount);
+        }
+      }
+
+      // Analyze categories
+      for (const cat of categoriesData) {
+        const budgeted = parseFloat(cat.budgeted);
+        const available = parseFloat(cat.available);
+        const spent = parseFloat(cat.spent);
+
+        if (available === budgeted) {
+          targetsCompleted++;
+        } else if (available < 0) {
+          criticalTargets.push(cat.name);
+        }
+
+        topExpenses.push({ name: cat.name, spent });
+        topRemaining.push({ name: cat.name, available });
+      }
+
+      const top3Expenses = topExpenses
+        .sort((a, b) => b.spent - a.spent)
+        .slice(0, 3);
+
+      const top3Remaining = topRemaining
+        .sort((a, b) => b.available - a.available)
+        .slice(0, 3);
+
+      // Most frequent category (by number of transactions)
+      const categoryCount: Record<string, number> = {};
+      transactionsData.forEach((t) => {
+        if (t.type === "expense" && t.category_id) {
+          categoryCount[t.category_id] = (categoryCount[t.category_id] || 0) + 1;
+        }
+      });
+
+      let maxCount = 0;
+      let mostFrequentCatId = "";
+      Object.entries(categoryCount).forEach(([catId, count]) => {
+        if (count > maxCount) {
+          maxCount = count;
+          mostFrequentCatId = catId;
+        }
+      });
+
+      // Find the category name from ID
+      if (mostFrequentCatId) {
+        const foundCat = categoriesData.find((cat) => cat.id === mostFrequentCatId);
+        if (foundCat) {
+          mostFrequentCat = foundCat.name;
+        }
+      }
+
+      // Percentage of income not spent
+      const percentageNotSpent =
+        totalIncome > 0
+          ? ((totalIncome - totalExpenses) / totalIncome) * 100
+          : 0;
+
+      const expenseTransactions = transactionsData.filter(
+        (t) => t.type === "expense"
+      );
+      const averageTransactionAmount =
+        expenseTransactions.length > 0
+          ? totalExpenses / expenseTransactions.length
+          : 0;
+
+      res.status(200).json({
+        budgetType,
+        totalIncome,
+        totalExpenses,
+        netIncome: totalIncome - totalExpenses,
+        targetsCompleted,
+        criticalTargets,
+        top3Expenses,
+        top3Remaining,
+        mostFrequentCategory: mostFrequentCat,
+        percentageNotSpent: Math.round(percentageNotSpent * 100) / 100,
+        averageTransactionAmount: Math.round(averageTransactionAmount * 100) / 100,
+        totalTransactions: transactionsData.length,
+        expenseTransactions: expenseTransactions.length,
+      });
+    } catch (error) {
+      console.error("Analytics error:", error);
+      res.status(500).json({ error: "Failed to fetch analytics" });
+    }
   }
-
-  // Percentage of income not spent
-  const percentageNotSpent = totalIncome > 0 
-    ? ((totalIncome - totalExpenses) / totalIncome) * 100 
-    : 0;
-
-  const expenseTransactions = transactions.filter(t => t.type === "expense");
-  const averageTransactionAmount = expenseTransactions.length > 0
-    ? totalExpenses / expenseTransactions.length
-    : 0;
-
-  res.status(200).json({
-    budgetType,
-    totalIncome,
-    totalExpenses,
-    netIncome: totalIncome - totalExpenses,
-    targetsCompleted,
-    criticalTargets,
-    top3Expenses,
-    top3Remaining,
-    mostFrequentCategory: mostFrequentCat,
-    percentageNotSpent: Math.round(percentageNotSpent * 100) / 100, // Round to 2 decimals
-    averageTransactionAmount: Math.round(averageTransactionAmount * 100) / 100,
-    totalTransactions: transactions.length,
-    expenseTransactions: expenseTransactions.length,
-  });
-});
+);
 
 export default router;

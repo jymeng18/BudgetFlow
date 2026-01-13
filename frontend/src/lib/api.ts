@@ -5,10 +5,19 @@
  *
  * Author: Jerry Meng
  *
- * Last modified: Dec 2025
+ * Last modified: Jan 2026
  */
 
 const API_BASE_URL = "http://localhost:8000/api";
+
+// Helper to get auth headers
+function getAuthHeaders(): HeadersInit {
+    const token = localStorage.getItem("access_token");
+    return {
+        "Content-Type": "application/json",
+        ...(token && { Authorization: `Bearer ${token}` }),
+    };
+}
 
 export interface Category {
     id: string;
@@ -47,7 +56,9 @@ export interface BudgetSummary {
 export async function getCategories(
     budgetType: string
 ): Promise<CategoryGroup[]> {
-    const response = await fetch(`${API_BASE_URL}/categories/${budgetType}`);
+    const response = await fetch(`${API_BASE_URL}/categories/${budgetType}`, {
+        headers: getAuthHeaders(),
+    });
 
     if (!response.ok) {
         throw new Error("Failed to fetch categories data.");
@@ -56,7 +67,9 @@ export async function getCategories(
 }
 
 export async function getTransactions(): Promise<Transaction[]> {
-    const response = await fetch(`${API_BASE_URL}/transactions`);
+    const response = await fetch(`${API_BASE_URL}/transactions`, {
+        headers: getAuthHeaders(),
+    });
 
     if (!response.ok) {
         throw new Error("Failed to fetch transactions data.");
@@ -65,20 +78,16 @@ export async function getTransactions(): Promise<Transaction[]> {
 }
 
 export async function addTransaction(transaction: {
-    // Backennd will send back id
     date: string;
     payee: string;
     categoryId: string;
     amount: number;
     notes: string;
     type: "expense" | "income";
-    budgetType: string;
 }): Promise<{ message: string; transaction: Transaction }> {
     const response = await fetch(`${API_BASE_URL}/transactions`, {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify(transaction),
     });
 
@@ -93,6 +102,7 @@ export async function deleteTransaction(
 ): Promise<{ message: string }> {
     const response = await fetch(`${API_BASE_URL}/transactions/${id}`, {
         method: "DELETE",
+        headers: getAuthHeaders(),
     });
 
     if (!response.ok) {
@@ -110,9 +120,7 @@ export async function updateCategoryBudget(
         `${API_BASE_URL}/categories/${budgetType}/${categoryId}/budget`,
         {
             method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-            },
+            headers: getAuthHeaders(),
             body: JSON.stringify({ budgeted }),
         }
     );
@@ -127,7 +135,9 @@ export async function updateCategoryBudget(
 export async function getBudgetSummary(
     budgetType: string
 ): Promise<BudgetSummary> {
-    const response = await fetch(`${API_BASE_URL}/summary/${budgetType}`);
+    const response = await fetch(`${API_BASE_URL}/summary/${budgetType}`, {
+        headers: getAuthHeaders(),
+    });
 
     if (!response.ok) {
         throw new Error("Failed to fetch summary");
@@ -153,7 +163,9 @@ export interface AnalyticsData {
 }
 
 export async function getAnalytics(budgetType: string): Promise<AnalyticsData> {
-    const response = await fetch(`${API_BASE_URL}/analytics/${budgetType}`);
+    const response = await fetch(`${API_BASE_URL}/analytics/${budgetType}`, {
+        headers: getAuthHeaders(),
+    });
 
     if (!response.ok) {
         throw new Error("Failed to fetch analytics data");
@@ -177,9 +189,7 @@ export async function sendChatMessage(
 ): Promise<ChatResponse> {
     const response = await fetch(`${API_BASE_URL}/generate`, {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ 
             prompt,
             messages: conversationHistory || []

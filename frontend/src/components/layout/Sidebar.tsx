@@ -145,6 +145,7 @@ export function Sidebar() {
                             await signOut();
                             localStorage.removeItem("access_token");
                             localStorage.removeItem("refresh_token");
+                            localStorage.removeItem("user_id");
                             navigate("/");
                         } catch (error) {
                             console.error("Logout failed:", error);

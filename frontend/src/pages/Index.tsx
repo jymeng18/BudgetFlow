@@ -188,6 +188,7 @@ const Index = () => {
             />
             <RecentTransactions
               transactions={transactions}
+              categoryGroups={categoryGroups}
               onTransactionDeleted={fetchData}
             />
           </div>

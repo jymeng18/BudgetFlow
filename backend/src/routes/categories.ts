@@ -7,27 +7,67 @@
  */
 
 import express, { Request, Response } from "express";
-import { categories } from "../data/categories";
-import { isValidBudgetType, findAndUpdateCategory } from "./utils";
+import { supabase } from "../server";
+import { authenticateUser } from "../middleware/authMiddleware";
+import { isValidBudgetType } from "./utils";
 
 const router = express.Router();
 
-router.get("/api/categories/:budgetType", (req: Request, res: Response) => {
-  const { budgetType } = req.params;
+router.get(
+  "/api/categories/:budgetType",
+  authenticateUser,
+  async (req: Request, res: Response) => {
+    const { budgetType } = req.params;
+    const userId = req.userId;
 
-  if (!isValidBudgetType(budgetType)) {
-    res.status(400).json({
-      error: "Invalid budget type.",
-    });
-    return;
+    if (!isValidBudgetType(budgetType)) {
+      res.status(400).json({
+        error: "Invalid budget type.",
+      });
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from("categories")
+        .select("*")
+        .eq("user_id", userId)
+        .eq("budget_type", budgetType);
+
+      if (error) {
+        res.status(500).json({ error: error.message });
+        return;
+      }
+
+      // Transform flat data into grouped format for frontend
+      const grouped = data.reduce((acc: any[], cat) => {
+        let group = acc.find((g) => g.id === cat.group_id);
+        if (!group) {
+          group = { id: cat.group_id, name: cat.group_name, categories: [] };
+          acc.push(group);
+        }
+        group.categories.push({
+          id: cat.id,
+          name: cat.name,
+          budgeted: parseFloat(cat.budgeted),
+          spent: parseFloat(cat.spent),
+          available: parseFloat(cat.available),
+        });
+        return acc;
+      }, []);
+
+      res.json(grouped);
+    } catch (error) {
+      console.error("Get categories error:", error);
+      res.status(500).json({ error: "Failed to fetch categories" });
+    }
   }
-
-  res.json(categories[budgetType]);
-});
+);
 
 router.put(
   "/api/categories/:budgetType/:categoryId/budget",
-  (req: Request, res: Response) => {
+  authenticateUser,
+  async (req: Request, res: Response) => {
     const { budgetType, categoryId } = req.params;
     const { budgeted } = req.body;
 
@@ -45,26 +85,47 @@ router.put(
       return;
     }
 
-    const category = findAndUpdateCategory(
-      budgetType,
-      categoryId,
-      (category) => {
-        category.budgeted = budgeted;
-        category.available = budgeted - category.spent;
+    try {
+      // First get current spent to calculate available
+      const { data: current, error: fetchError } = await supabase
+        .from("categories")
+        .select("spent")
+        .eq("id", categoryId)
+        .single();
+
+      if (fetchError || !current) {
+        res.status(404).json({ error: "Category not found." });
+        return;
       }
-    );
 
-    if (!category) {
-      res.status(404).json({
-        error: "Category not found.",
+      const available = budgeted - parseFloat(current.spent);
+
+      const { data, error } = await supabase
+        .from("categories")
+        .update({ budgeted, available })
+        .eq("id", categoryId)
+        .select()
+        .single();
+
+      if (error) {
+        res.status(500).json({ error: error.message });
+        return;
+      }
+
+      res.status(200).json({
+        message: "Updated budget successfully.",
+        category: {
+          id: data.id,
+          name: data.name,
+          budgeted: parseFloat(data.budgeted),
+          spent: parseFloat(data.spent),
+          available: parseFloat(data.available),
+        },
       });
-      return;
+    } catch (error) {
+      console.error("Update category error:", error);
+      res.status(500).json({ error: "Failed to update category" });
     }
-
-    res.status(200).json({
-      message: "Updated budget succesffuly.",
-      category,
-    });
   }
 );
 
