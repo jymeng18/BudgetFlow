@@ -17,6 +17,7 @@ import Index from './pages/Index.tsx';
 import Settings from './pages/Settings.tsx';
 import AIInsights from './pages/AIInsights.tsx';
 import Reports from './pages/Reports.tsx';
+import SignUp from './pages/SignUp.tsx';
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Landing />} />
+          <Route path="/signup" element={<SignUp />} />
           <Route path="/app" element={<Index />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/ai-insights" element={<AIInsights />} />

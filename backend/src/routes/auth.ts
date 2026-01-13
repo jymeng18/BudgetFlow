@@ -98,7 +98,7 @@ router.post("/api/auth/login", async (req: Request, res: Response) => {
     return;
   }
 
-  if (password.length < 4) {
+  if (password.length < 6) {
     res.status(400).json({
       message: "Password must be at least 4 characters long.",
     });
@@ -121,7 +121,10 @@ router.post("/api/auth/login", async (req: Request, res: Response) => {
     res.status(201).json({
       message: "User successfully logged in.",
       user: data.user,
-      session: data.session,
+      session: {
+        access_token: data.session.access_token,
+        refresh_token: data.session.refresh_token
+      },
     });
   }
 

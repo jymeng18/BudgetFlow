@@ -192,3 +192,70 @@ export async function sendChatMessage(
 
     return response.json();
 }
+
+/* Authentication API Functions */
+
+export interface AuthResponse {
+    message: string;
+    user: {
+        id: string;
+        email: string;
+    };
+    session: {
+        access_token: string;
+        refresh_token: string;
+    } | null;
+}
+
+export async function signUp(
+    email: string,
+    password: string
+): Promise<AuthResponse> {
+    const response = await fetch(`${API_BASE_URL}/auth/signUp`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to sign up");
+    }
+
+    return response.json();
+}
+
+export async function login(
+    email: string,
+    password: string
+): Promise<AuthResponse> {
+    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to log in");
+    }
+
+    return response.json();
+}
+
+export async function signOut(): Promise<{ message: string }> {
+    const response = await fetch(`${API_BASE_URL}/auth/signOut`, {
+        method: "POST",
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to sign out");
+    }
+
+    return response.json();
+}
