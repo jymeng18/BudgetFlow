@@ -145,7 +145,6 @@ const AIInsights = () => {
                   {/* Prompt Input */}
                   <div className="flex gap-3">
                     <Input
-                      placeholder="Ask about your budget, spending habits, or savings goals..."
                       value={prompt}
                       onChange={(e) => setPrompt(e.target.value)}
                       onKeyDown={handleKeyDown}
