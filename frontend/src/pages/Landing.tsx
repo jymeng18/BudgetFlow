@@ -104,7 +104,7 @@ const Landing = () => {
             </button>
             <Button 
               variant="outline"
-              onClick={() => navigate("/app")}
+              onClick={() => navigate("/login")}
               className="border-sidebar-muted/50 bg-sidebar-accent/30 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground"
             >
               Sign In
@@ -140,7 +140,7 @@ const Landing = () => {
             <div className="flex flex-col sm:flex-row items-center gap-4 mb-8">
               <Button 
                 size="lg"
-                onClick={() => navigate("/app")}
+                onClick={() => navigate("/signup")}
                 className="bg-gradient-to-r from-success to-success/80 hover:from-success/90 hover:to-success/70 text-success-foreground font-semibold px-8 py-7 text-lg rounded-xl shadow-lg shadow-success/30 hover:shadow-xl hover:shadow-success/40 transition-all hover:scale-105 w-full sm:w-auto"
               >
                 Get Started Free

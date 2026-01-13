@@ -6,10 +6,12 @@ import {
     Plus,
     ChevronDown,
     Sparkles,
+    LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { signOut } from "@/lib/api";
 
 interface Account {
     id: string;
@@ -133,6 +135,26 @@ export function Sidebar() {
                         {formatCurrency(totalBalance)}
                     </span>
                 </div>
+            </div>
+
+            {/* Logout Button */}
+            <div className="p-4 border-t border-sidebar-border">
+                <button
+                    onClick={async () => {
+                        try {
+                            await signOut();
+                            localStorage.removeItem("access_token");
+                            localStorage.removeItem("refresh_token");
+                            navigate("/");
+                        } catch (error) {
+                            console.error("Logout failed:", error);
+                        }
+                    }}
+                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium text-sidebar-muted hover:bg-destructive/10 hover:text-destructive transition-colors"
+                >
+                    <LogOut className="w-5 h-5" />
+                    Logout
+                </button>
             </div>
         </aside>
     );

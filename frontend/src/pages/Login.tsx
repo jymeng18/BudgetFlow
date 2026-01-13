@@ -1,7 +1,7 @@
 /**
- * Filename: SignUp.tsx
+ * Filename: Login.tsx
  *
- * Desc: Sign up page for new users
+ * Desc: Login page for existing users
  *
  * Author: Jerry Meng
  *
@@ -21,35 +21,25 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { signUp } from "@/lib/api";
+import { login } from "@/lib/api";
 import { Loader2, ArrowLeft, Eye, EyeOff } from "lucide-react";
 
-const SignUp = () => {
+const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const validateForm = (): string | null => {
-    if (!email || !password || !confirmPassword) {
-      return "All fields are required.";
+    if (!email || !password) {
+      return "Email and password are required.";
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return "Please enter a valid email address.";
-    }
-
-    if (password.length < 6) {
-      return "Password must be at least 6 characters long.";
-    }
-
-    if (password !== confirmPassword) {
-      return "Passwords do not match.";
     }
 
     return null;
@@ -68,7 +58,7 @@ const SignUp = () => {
     setIsLoading(true);
 
     try {
-      const response = await signUp(email, password);
+      const response = await login(email, password);
       
       if (response.session) {
         localStorage.setItem("access_token", response.session.access_token);
@@ -101,9 +91,9 @@ const SignUp = () => {
       <main className="flex-1 flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Create your account</CardTitle>
+            <CardTitle className="text-2xl">Welcome back</CardTitle>
             <CardDescription>
-              Start your journey to better budgeting
+              Sign in to continue managing your budget
             </CardDescription>
           </CardHeader>
 
@@ -138,7 +128,7 @@ const SignUp = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     disabled={isLoading}
-                    autoComplete="new-password"
+                    autoComplete="current-password"
                     className="pr-10"
                   />
                   <button
@@ -147,36 +137,6 @@ const SignUp = () => {
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                   >
                     {showPassword ? (
-                      <EyeOff className="w-4 h-4" />
-                    ) : (
-                      <Eye className="w-4 h-4" />
-                    )}
-                  </button>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Must be at least 6 characters
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
-                <div className="relative">
-                  <Input
-                    id="confirmPassword"
-                    type={showConfirmPassword ? "text" : "password"}
-                    placeholder="••••••••"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    disabled={isLoading}
-                    autoComplete="new-password"
-                    className="pr-10"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {showConfirmPassword ? (
                       <EyeOff className="w-4 h-4" />
                     ) : (
                       <Eye className="w-4 h-4" />
@@ -195,20 +155,20 @@ const SignUp = () => {
                 {isLoading ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    Creating account...
+                    Signing in...
                   </>
                 ) : (
-                  "Create Account"
+                  "Sign In"
                 )}
               </Button>
 
               <p className="text-sm text-muted-foreground text-center">
-                Already have an account?{" "}
+                Don't have an account?{" "}
                 <Link
-                  to="/login"
+                  to="/signup"
                   className="text-primary hover:underline font-medium"
                 >
-                  Sign in
+                  Sign up
                 </Link>
               </p>
             </CardFooter>
@@ -218,10 +178,10 @@ const SignUp = () => {
 
       {/* Footer */}
       <footer className="p-4 text-center text-sm text-muted-foreground">
-        By signing up, you agree to our Terms of Service and Privacy Policy
+        By signing in, you agree to our Terms of Service and Privacy Policy
       </footer>
     </div>
   );
 };
 
-export default SignUp;
+export default Login;
