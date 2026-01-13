@@ -2,7 +2,7 @@ import { useState } from "react";
 import { CategoryGroup, type Category } from "./CategoryGroup";
 import { type BudgetType } from "./BudgetTypeTabs";
 import { TargetModal, type TargetData } from "./TargetModal";
-import { updateCategoryBudget } from "@/lib/api";
+import { useUpdateCategoryBudget } from "@/hooks/useBudgetData";
 
 // Type for category group data from the backend
 interface CategoryGroupData {
@@ -14,41 +14,30 @@ interface CategoryGroupData {
 interface BudgetTableProps {
     budgetType: BudgetType;
     categoryGroups: CategoryGroupData[];
-    onDataChange: () => void;
 }
 
 export function BudgetTable({
     budgetType,
     categoryGroups,
-    onDataChange,
 }: BudgetTableProps) {
     const [selectedCategory, setSelectedCategory] = useState<Category | null>(
         null
     );
     const [isTargetModalOpen, setIsTargetModalOpen] = useState(false);
+    const updateBudgetMutation = useUpdateCategoryBudget(budgetType);
 
     const handleCategoryClick = (category: Category) => {
         setSelectedCategory(category);
         setIsTargetModalOpen(true);
     };
 
-    // Save budget target to the backend
-    const handleSaveTarget = async (categoryId: string, target: TargetData) => {
-        try {
-            await updateCategoryBudget(budgetType, categoryId, target.amount);
-            onDataChange(); // Refresh data after saving
-        } catch (error) {
-            console.error("Failed to save target:", error);
-        }
+    // Save budget target with optimistic update
+    const handleSaveTarget = (categoryId: string, target: TargetData) => {
+        updateBudgetMutation.mutate({ categoryId, budgeted: target.amount });
     };
 
-    const handleDeleteTarget = async (categoryId: string) => {
-        try {
-            await updateCategoryBudget(budgetType, categoryId, 0);
-            onDataChange(); // Refresh data after deleting
-        } catch (error) {
-            console.error("Failed to delete target:", error);
-        }
+    const handleDeleteTarget = (categoryId: string) => {
+        updateBudgetMutation.mutate({ categoryId, budgeted: 0 });
     };
 
     return (

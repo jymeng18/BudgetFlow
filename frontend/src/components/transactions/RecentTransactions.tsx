@@ -1,18 +1,22 @@
 import { ArrowDownLeft, ArrowUpRight, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { deleteTransaction, type Transaction, type CategoryGroup } from "@/lib/api";
+import { type Transaction, type CategoryGroup } from "@/lib/api";
+import { useDeleteTransaction } from "@/hooks/useBudgetData";
+import { type BudgetType } from "@/components/budget/BudgetTypeTabs";
 
 interface RecentTransactionsProps {
     transactions: Transaction[];
     categoryGroups: CategoryGroup[];
-    onTransactionDeleted: () => void;
+    budgetType: BudgetType;
 }
 
 export function RecentTransactions({
     transactions,
     categoryGroups,
-    onTransactionDeleted,
+    budgetType,
 }: RecentTransactionsProps) {
+    const deleteTransactionMutation = useDeleteTransaction(budgetType);
+
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat("en-US", {
             style: "currency",
@@ -39,14 +43,9 @@ export function RecentTransactions({
         return "Uncategorized";
     };
 
-    // Handle deleting a transaction
-    const handleDelete = async (id: string) => {
-        try {
-            await deleteTransaction(id);
-            onTransactionDeleted();
-        } catch (error) {
-            console.error("Failed to delete transaction:", error);
-        }
+    // Handle deleting a transaction with optimistic update
+    const handleDelete = (id: string) => {
+        deleteTransactionMutation.mutate(id);
     };
 
     return (

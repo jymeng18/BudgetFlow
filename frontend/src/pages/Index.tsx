@@ -5,10 +5,10 @@
  *
  * Author: Jerry Meng
  *
- * Last Modified: Dec 2025
+ * Last Modified: Jan 2026
  */
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { BudgetHeader } from "@/components/budget/BudgetHeader";
 import { BudgetSummary } from "@/components/budget/BudgetSummary";
@@ -23,13 +23,11 @@ import {
     type TransactionData,
 } from "@/components/budget/AddTransactionModal";
 import {
-    getCategories,
-    getTransactions,
-    addTransaction,
-    getBudgetSummary,
-    type CategoryGroup,
-    type Transaction,
-} from "@/lib/api";
+    useTransactions,
+    useCategories,
+    useBudgetSummary,
+    useAddTransaction,
+} from "@/hooks/useBudgetData";
 
 const months = [
     "January",
@@ -52,63 +50,32 @@ const Index = () => {
     const [budgetType, setBudgetType] = useState<BudgetType>("personal");
     const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false);
 
-    // State for data from the backend
-    const [categoryGroups, setCategoryGroups] = useState<CategoryGroup[]>([]);
-    const [transactions, setTransactions] = useState<Transaction[]>([]);
-    const [summaryItems, setSummaryItems] = useState<
-        {
-            label: string;
-            amount: number;
-            type: "income" | "expense" | "available";
-        }[]
-    >([]);
-    const [isLoading, setIsLoading] = useState(true);
+    // React Query hooks with optimistic updates
+    const { data: categoryGroups = [] } = useCategories(budgetType);
+    const { data: transactions = [] } = useTransactions();
+    const { data: summaryData } = useBudgetSummary(budgetType);
+    const addTransactionMutation = useAddTransaction(budgetType);
 
-    // Fetch data from backend when component loads or budgetType changes
-    useEffect(() => {
-        fetchData();
-    }, [budgetType]);
-
-    // Function to fetch all data from the backend
-    const fetchData = async () => {
-        setIsLoading(true);
-        try {
-            // Fetch categories, transactions, and summary in parallel
-            // Note: all calls to backend must suceed
-            const [categoriesData, transactionsData, summaryData] =
-                await Promise.all([
-                    getCategories(budgetType),
-                    getTransactions(),
-                    getBudgetSummary(budgetType),
-                ]);
-
-            setCategoryGroups(categoriesData);
-            setTransactions(transactionsData);
-
-            // Convert summary data to the format expected by BudgetSummary component
-            setSummaryItems([
-                {
-                    label: "Income",
-                    amount: summaryData.totalIncome,
-                    type: "income",
-                },
-                {
-                    label: "Budgeted",
-                    amount: summaryData.totalBudgeted,
-                    type: "expense",
-                },
-                {
-                    label: "Available",
-                    amount: summaryData.totalAvailable,
-                    type: "available",
-                },
-            ]);
-        } catch (error) {
-            console.error("Failed to fetch data:", error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
+    // Convert summary data to the format expected by BudgetSummary component
+    const summaryItems = summaryData
+        ? [
+              {
+                  label: "Income",
+                  amount: summaryData.totalIncome,
+                  type: "income" as const,
+              },
+              {
+                  label: "Budgeted",
+                  amount: summaryData.totalBudgeted,
+                  type: "expense" as const,
+              },
+              {
+                  label: "Available",
+                  amount: summaryData.totalAvailable,
+                  type: "available" as const,
+              },
+          ]
+        : [];
 
     const handlePrevMonth = () => {
         if (currentMonth === 0) {
@@ -132,15 +99,9 @@ const Index = () => {
         setIsTransactionModalOpen(true);
     };
 
-    // Handle saving a new transaction to the backend
-    const handleSaveTransaction = async (transaction: TransactionData) => {
-        try {
-            await addTransaction(transaction);
-            // Refresh data after adding transaction
-            fetchData();
-        } catch (error) {
-            console.error("Failed to save transaction:", error);
-        }
+    // Handle saving a new transaction with optimistic update
+    const handleSaveTransaction = (transaction: TransactionData) => {
+        addTransactionMutation.mutate(transaction);
     };
 
     // Get flattened categories for the dropdown in AddTransactionModal
@@ -181,12 +142,11 @@ const Index = () => {
             <BudgetTable
               budgetType={budgetType}
               categoryGroups={categoryGroups}
-              onDataChange={fetchData}
             />
             <RecentTransactions
               transactions={transactions}
               categoryGroups={categoryGroups}
-              onTransactionDeleted={fetchData}
+              budgetType={budgetType}
             />
           </div>
         </div>
