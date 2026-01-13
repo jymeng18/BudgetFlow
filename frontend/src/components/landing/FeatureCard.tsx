@@ -14,7 +14,6 @@ export const FeatureCard = ({
     title,
     subtitle,
     linkText,
-    delay = 0,
 }: FeatureCardProps) => {
     return (
         <div
