@@ -102,23 +102,34 @@ router.post(
         return;
       }
 
-      // Update category spent/available if expense with a category
-      if (categoryId && type === "expense") {
+      // Update category spent/available based on transaction type
+      if (categoryId) {
         const { data: cat } = await supabase
           .from("categories")
-          .select("spent, budgeted")
+          .select("spent, budgeted, available")
           .eq("id", categoryId)
           .single();
 
         if (cat) {
-          const newSpent = parseFloat(cat.spent) + amount;
-          await supabase
-            .from("categories")
-            .update({
-              spent: newSpent,
-              available: parseFloat(cat.budgeted) - newSpent,
-            })
-            .eq("id", categoryId);
+          if (type === "expense") {
+            const newSpent = parseFloat(cat.spent) + amount;
+            await supabase
+              .from("categories")
+              .update({
+                spent: newSpent,
+                available: parseFloat(cat.budgeted) - newSpent,
+              })
+              .eq("id", categoryId);
+          } else if (type === "income") {
+            // Income adds to the category's available amount
+            const newAvailable = parseFloat(cat.available) + amount;
+            await supabase
+              .from("categories")
+              .update({
+                available: newAvailable,
+              })
+              .eq("id", categoryId);
+          }
         }
       }
 
@@ -160,23 +171,34 @@ router.delete(
         return;
       }
 
-      // Reverse the category update if it was an expense with a category
-      if (transaction.category_id && transaction.type === "expense") {
+      // Reverse the category update based on transaction type
+      if (transaction.category_id) {
         const { data: cat } = await supabase
           .from("categories")
-          .select("spent, budgeted")
+          .select("spent, budgeted, available")
           .eq("id", transaction.category_id)
           .single();
 
         if (cat) {
-          const newSpent = parseFloat(cat.spent) - parseFloat(transaction.amount);
-          await supabase
-            .from("categories")
-            .update({
-              spent: newSpent,
-              available: parseFloat(cat.budgeted) - newSpent,
-            })
-            .eq("id", transaction.category_id);
+          if (transaction.type === "expense") {
+            const newSpent = parseFloat(cat.spent) - parseFloat(transaction.amount);
+            await supabase
+              .from("categories")
+              .update({
+                spent: newSpent,
+                available: parseFloat(cat.budgeted) - newSpent,
+              })
+              .eq("id", transaction.category_id);
+          } else if (transaction.type === "income") {
+            // Reverse income: subtract from available
+            const newAvailable = parseFloat(cat.available) - parseFloat(transaction.amount);
+            await supabase
+              .from("categories")
+              .update({
+                available: newAvailable,
+              })
+              .eq("id", transaction.category_id);
+          }
         }
       }
 
