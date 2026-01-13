@@ -7,6 +7,7 @@
  */
 
 import express, { Request, Response } from "express";
+import rateLimit from "express-rate-limit";
 import { supabase } from "../server";
 import { authenticateUser } from "../middleware/authMiddleware";
 import { systemPrompt, formatFinancialData } from "../prompt/prompts";
@@ -14,9 +15,22 @@ import { getOpenAI } from "./utils";
 
 const router = express.Router();
 
+// Rate limiter for AI chatbot - 25 requests per day per user
+const chatbotLimiter = rateLimit({
+  windowMs: 24 * 60 * 60 * 1000, // 24 hours
+  limit: 25,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req: Request) => req.userId || req.ip || "anonymous",
+  message: {
+    error: "You have reached your daily limit of 25 AI requests. Please try again tomorrow.",
+  },
+});
+
 router.post(
   "/api/generate",
   authenticateUser,
+  chatbotLimiter,
   async (req: Request, res: Response) => {
     const { prompt, messages: conversationHistory } = req.body;
     const userId = req.userId;
