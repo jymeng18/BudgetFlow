@@ -8,7 +8,7 @@
  * Last modified: Jan 2026
  */
 
-const API_BASE_URL = "https://budgetflow-m6q0.onrender.com/api";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 // Helper to get auth headers
 function getAuthHeaders(): HeadersInit {
