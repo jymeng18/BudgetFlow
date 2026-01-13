@@ -68,17 +68,5 @@ BudgetFlow is a comprehensive personal finance management platform that helps us
 - Secure authentication and authorization
 - Real-time data synchronization
 
-## Key Features
-
-- ** Budget Management**: Create, edit, and track budgets across multiple categories
-- ** Transaction Tracking**: Add and categorize income and expenses with ease
-- ** Visual Analytics**: Interactive charts and progress bars for budget visualization
-- ** AI Insights**: Personalized spending analysis and recommendations
-- ** Responsive Design**: Seamless experience across desktop and mobile devices
-- ** Secure Authentication**: Supabase-powered user management and data security
-- ** Comprehensive Reports**: Detailed financial reports and trend analysis
-- ** Real-time Updates**: Live budget tracking and instant data synchronization
-- ** Modern UI**: Clean, intuitive interface built with shadcn/ui components
-- ** Smart Alerts**: Budget limit notifications and spending insights
 
 
