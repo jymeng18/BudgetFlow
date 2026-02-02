@@ -32,7 +32,7 @@ export function CategoryRow({ category, onClick }: CategoryRowProps) {
             <div className="flex items-center gap-3 pl-6">
                 <div className="flex-1">
                     <span className="text-sm">{name}</span>
-                    <div className="mt-1.5">
+                    <div className="mt-1.5 w-2/3">
                         <Progress
                             value={spentPercentage}
                             className={cn(
