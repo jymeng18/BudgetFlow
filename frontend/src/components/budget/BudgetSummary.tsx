@@ -30,13 +30,15 @@ export function BudgetSummary({ items }: BudgetSummaryProps) {
                             <p
                                 className={cn(
                                     "text-xl font-semibold mt-0.5 truncate",
-                                    item.type === "income" && "text-success",
-                                    item.type === "expense" &&
-                                        "text-foreground",
+                                    item.type === "income" &&
+                                        (item.amount >= 0
+                                            ? "text-success"
+                                            : "text-destructive"),
+                                    item.type === "expense" && "text-warning",
                                     item.type === "available" &&
-                                        item.amount >= 0
-                                        ? "text-success"
-                                        : "text-destructive"
+                                        (item.amount >= 0
+                                            ? "text-success"
+                                            : "text-destructive")
                                 )}
                                 title={`${item.amount < 0 ? "-" : ""}${formatCurrency(item.amount)}`}
                             >
