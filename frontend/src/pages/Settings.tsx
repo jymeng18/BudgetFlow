@@ -78,41 +78,6 @@ export default function Settings() {
                 </div>
               </CardContent>
             </Card>
-
-            <Card>
-              <CardHeader>
-                <div className="flex items-center gap-2">
-                  <User className="w-5 h-5 text-muted-foreground" />
-                  <CardTitle className="text-lg">Profile</CardTitle>
-                </div>
-                <CardDescription>Your personal information</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="firstName">First Name</Label>
-                    <Input id="firstName" placeholder="John" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="lastName">Last Name</Label>
-                    <Input id="lastName" placeholder="Doe" />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="john@example.com"
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Save Button */}
-            <div className="flex justify-end pt-4">
-              <Button>Save Changes</Button>
-            </div>
           </div>
         </main>
       </div>

@@ -10,7 +10,6 @@
 
 import { useState } from "react";
 import { Sidebar } from "@/components/layout/Sidebar";
-import { BudgetHeader } from "@/components/budget/BudgetHeader";
 import { BudgetSummary } from "@/components/budget/BudgetSummary";
 import { BudgetTable } from "@/components/budget/BudgetTable";
 import {
@@ -28,25 +27,10 @@ import {
     useBudgetSummary,
     useAddTransaction,
 } from "@/hooks/useBudgetData";
-
-const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-];
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 
 const Index = () => {
-    const [currentMonth, setCurrentMonth] = useState(11);
-    const [currentYear, setCurrentYear] = useState(2024);
     const [budgetType, setBudgetType] = useState<BudgetType>("personal");
     const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false);
 
@@ -77,24 +61,6 @@ const Index = () => {
           ]
         : [];
 
-    const handlePrevMonth = () => {
-        if (currentMonth === 0) {
-            setCurrentMonth(11);
-            setCurrentYear(currentYear - 1);
-        } else {
-            setCurrentMonth(currentMonth - 1);
-        }
-    };
-
-    const handleNextMonth = () => {
-        if (currentMonth === 11) {
-            setCurrentMonth(0);
-            setCurrentYear(currentYear + 1);
-        } else {
-            setCurrentMonth(currentMonth + 1);
-        }
-    };
-
     const handleAddTransaction = () => {
         setIsTransactionModalOpen(true);
     };
@@ -121,19 +87,19 @@ const Index = () => {
         <Sidebar />
 
         <div className="flex-1 flex flex-col min-w-0 ml-64">
-          <BudgetHeader
-            month={months[currentMonth]}
-            year={currentYear}
-            onPrevMonth={handlePrevMonth}
-            onNextMonth={handleNextMonth}
-            onAddTransaction={handleAddTransaction}
-          />
-
-          <div className="px-6 py-3 border-b border-border bg-card">
+          <div className="px-6 py-3 border-b border-border bg-card flex items-center justify-between">
             <BudgetTypeTabs
               activeType={budgetType}
               onTypeChange={setBudgetType}
             />
+            <Button
+              size="sm"
+              className="gap-1.5"
+              onClick={handleAddTransaction}
+            >
+              <Plus className="w-4 h-4" />
+              Add Transaction
+            </Button>
           </div>
 
           <BudgetSummary items={summaryItems} />
