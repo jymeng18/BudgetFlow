@@ -3,6 +3,8 @@ import { cn } from "@/lib/utils";
 import { type Transaction, type CategoryGroup } from "@/lib/api";
 import { useDeleteTransaction } from "@/hooks/useBudgetData";
 import { type BudgetType } from "@/components/budget/BudgetTypeTabs";
+import { useState } from "react";
+import { ViewAllTransactionsModal } from "./ViewAllTransactionsModal";
 
 interface RecentTransactionsProps {
     transactions: Transaction[];
@@ -16,6 +18,7 @@ export function RecentTransactions({
     budgetType,
 }: RecentTransactionsProps) {
     const deleteTransactionMutation = useDeleteTransaction(budgetType);
+    const [showAllTransactions, setShowAllTransactions] = useState(false);
 
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat("en-US", {
@@ -129,10 +132,21 @@ export function RecentTransactions({
             </div>
 
             <div className="px-4 py-3 border-t border-border">
-                <button className="text-sm text-primary hover:underline font-medium">
+                <button 
+                    onClick={() => setShowAllTransactions(true)}
+                    className="text-sm text-primary hover:underline font-medium"
+                >
                     View All Transactions
                 </button>
             </div>
+
+            <ViewAllTransactionsModal
+                open={showAllTransactions}
+                onOpenChange={setShowAllTransactions}
+                transactions={transactions}
+                categoryGroups={categoryGroups}
+                budgetType={budgetType}
+            />
         </div>
     );
 }
