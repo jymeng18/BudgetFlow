@@ -116,17 +116,10 @@ const Reports = () => {
           padding: 20,
           font: {
             size: 12,
-            family: '"JetBrains Mono", monospace',
           },
         },
       },
       tooltip: {
-        titleFont: {
-          family: '"JetBrains Mono", monospace',
-        },
-        bodyFont: {
-          family: '"JetBrains Mono", monospace',
-        },
         callbacks: {
           label: (context: { label: string; raw: unknown }) => {
             const value = context.raw as number;
@@ -184,17 +177,10 @@ const Reports = () => {
           padding: 20,
           font: {
             size: 12,
-            family: '"JetBrains Mono", monospace',
           },
         },
       },
       tooltip: {
-        titleFont: {
-          family: '"JetBrains Mono", monospace',
-        },
-        bodyFont: {
-          family: '"JetBrains Mono", monospace',
-        },
         callbacks: {
           label: (context: { dataset: { label?: string }; raw: unknown }) => {
             const value = context.raw as number;
@@ -211,9 +197,6 @@ const Reports = () => {
         },
         ticks: {
           color: "hsl(var(--muted-foreground))",
-          font: {
-            family: '"JetBrains Mono", monospace',
-          },
           callback: function (tickValue: string | number) {
             const value =
               typeof tickValue === "string"
@@ -231,7 +214,6 @@ const Reports = () => {
           color: "hsl(var(--foreground))",
           font: {
             size: 11,
-            family: '"JetBrains Mono", monospace',
           },
         },
       },
@@ -265,12 +247,6 @@ const Reports = () => {
         display: false,
       },
       tooltip: {
-        titleFont: {
-          family: '"JetBrains Mono", monospace',
-        },
-        bodyFont: {
-          family: '"JetBrains Mono", monospace',
-        },
         callbacks: {
           label: (context: { raw: unknown }) => {
             return `Count: ${context.raw}`;
@@ -287,7 +263,6 @@ const Reports = () => {
           color: "hsl(var(--foreground))",
           font: {
             size: 12,
-            family: '"JetBrains Mono", monospace',
           },
         },
       },
@@ -297,9 +272,6 @@ const Reports = () => {
         },
         ticks: {
           color: "hsl(var(--muted-foreground))",
-          font: {
-            family: '"JetBrains Mono", monospace',
-          },
           stepSize: 1,
         },
         beginAtZero: true,
@@ -383,7 +355,7 @@ const Reports = () => {
   return (
     <div
       className="flex min-h-screen bg-background"
-      style={{ fontFamily: '"JetBrains Mono", monospace' }}
+
     >
       <Sidebar />
 

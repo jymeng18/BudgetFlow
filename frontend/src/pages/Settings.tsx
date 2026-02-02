@@ -46,7 +46,7 @@ export default function Settings() {
     return (
       <div
         className="flex min-h-screen bg-background"
-        style={{ fontFamily: '"JetBrains Mono", monospace' }}
+
       >
         <Sidebar />
 

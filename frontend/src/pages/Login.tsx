@@ -77,7 +77,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col" style={{ fontFamily: '"JetBrains Mono", monospace' }}>
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
       <header className="p-4">
         <Button

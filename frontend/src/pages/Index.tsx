@@ -116,7 +116,7 @@ const Index = () => {
     return (
       <div
         className="flex h-screen w-full bg-background"
-        style={{ fontFamily: '"JetBrains Mono", monospace' }}
+
       >
         <Sidebar />
 

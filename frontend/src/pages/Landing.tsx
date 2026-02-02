@@ -58,7 +58,7 @@ const Landing = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-sidebar relative overflow-hidden" style={{ fontFamily: '"JetBrains Mono", monospace' }}>
+    <div className="min-h-screen bg-sidebar relative overflow-hidden">
       {/* Static background gradient orbs - optimized for performance */}
       <div className="absolute top-20 left-10 w-96 h-96 bg-primary/15 rounded-full blur-2xl" style={{ willChange: 'transform' }} />
       <div className="absolute bottom-40 right-20 w-80 h-80 bg-success/15 rounded-full blur-2xl" style={{ willChange: 'transform' }} />
