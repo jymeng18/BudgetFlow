@@ -10,6 +10,7 @@
 
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -26,6 +27,7 @@ import { Loader2, ArrowLeft, Eye, EyeOff } from "lucide-react";
 
 const Login = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -67,6 +69,9 @@ const Login = () => {
       if (response.user) {
         localStorage.setItem("user_id", response.user.id);
       }
+      
+      // Clear any cached data from previous user before navigating
+      queryClient.clear();
       
       navigate("/app");
     } catch (err) {

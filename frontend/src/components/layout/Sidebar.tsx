@@ -11,6 +11,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { signOut } from "@/lib/api";
 
 interface Account {
@@ -38,6 +39,7 @@ export function Sidebar() {
     const [accountsOpen, setAccountsOpen] = useState(true);
     const navigate = useNavigate();
     const location = useLocation();
+    const queryClient = useQueryClient();
 
     const totalBalance = accounts.reduce((sum, account) => {
         return (sum += account.balance);
@@ -146,6 +148,7 @@ export function Sidebar() {
                             localStorage.removeItem("access_token");
                             localStorage.removeItem("refresh_token");
                             localStorage.removeItem("user_id");
+                            queryClient.clear(); // Clear all cached data on logout
                             navigate("/");
                         } catch (error) {
                             console.error("Logout failed:", error);
