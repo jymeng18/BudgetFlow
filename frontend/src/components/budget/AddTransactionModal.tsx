@@ -89,7 +89,10 @@ export function AddTransactionModal({
                             type="button"
                             variant={type === "income" ? "default" : "outline"}
                             className="flex-1"
-                            onClick={() => setType("income")}
+                            onClick={() => {
+                                setType("income");
+                                setCategoryId(""); // Clear category for income
+                            }}
                         >
                             Income
                         </Button>
@@ -117,25 +120,27 @@ export function AddTransactionModal({
                         />
                     </div>
 
-                    {/* Category */}
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium">Category</label>
-                        <Select
-                            value={categoryId}
-                            onValueChange={setCategoryId}
-                        >
-                            <SelectTrigger className="bg-background">
-                                <SelectValue placeholder="Select category" />
-                            </SelectTrigger>
-                            <SelectContent className="bg-popover z-50">
-                                {categories.map((cat) => (
-                                    <SelectItem key={cat.id} value={cat.id}>
-                                        {cat.groupName} → {cat.name}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
+                    {/* Category - Only for expenses */}
+                    {type === "expense" && (
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">Category</label>
+                            <Select
+                                value={categoryId}
+                                onValueChange={setCategoryId}
+                            >
+                                <SelectTrigger className="bg-background">
+                                    <SelectValue placeholder="Select category" />
+                                </SelectTrigger>
+                                <SelectContent className="bg-popover z-50">
+                                    {categories.map((cat) => (
+                                        <SelectItem key={cat.id} value={cat.id}>
+                                            {cat.groupName} → {cat.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    )}
 
                     {/* Amount */}
                     <div className="space-y-2">

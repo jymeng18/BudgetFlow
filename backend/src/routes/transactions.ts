@@ -80,6 +80,44 @@ router.post(
     }
 
     try {
+      // For expenses, check if user has enough balance
+      if (type === "expense") {
+        // Get total income
+        const { data: incomeData, error: incomeError } = await supabase
+          .from("transactions")
+          .select("amount")
+          .eq("user_id", userId)
+          .eq("type", "income");
+
+        if (incomeError) {
+          res.status(500).json({ error: incomeError.message });
+          return;
+        }
+
+        // Get total expenses
+        const { data: expenseData, error: expenseError } = await supabase
+          .from("transactions")
+          .select("amount")
+          .eq("user_id", userId)
+          .eq("type", "expense");
+
+        if (expenseError) {
+          res.status(500).json({ error: expenseError.message });
+          return;
+        }
+
+        const totalIncome = incomeData.reduce((sum, t) => sum + parseFloat(t.amount), 0);
+        const totalExpenses = expenseData.reduce((sum, t) => sum + parseFloat(t.amount), 0);
+        const currentBalance = totalIncome - totalExpenses;
+
+        if (amount > currentBalance) {
+          res.status(400).json({
+            error: `Insufficient balance. Available: $${currentBalance.toFixed(2)}, Requested: $${amount.toFixed(2)}`,
+          });
+          return;
+        }
+      }
+
       const newTransaction = {
         id: uuidv4(),
         user_id: userId,
@@ -102,8 +140,8 @@ router.post(
         return;
       }
 
-      // Update category spent/available based on transaction type
-      if (categoryId) {
+      // Update category spent/available only for expenses
+      if (categoryId && type === "expense") {
         const { data: cat } = await supabase
           .from("categories")
           .select("spent, budgeted, available")
@@ -111,25 +149,14 @@ router.post(
           .single();
 
         if (cat) {
-          if (type === "expense") {
-            const newSpent = parseFloat(cat.spent) + amount;
-            await supabase
-              .from("categories")
-              .update({
-                spent: newSpent,
-                available: parseFloat(cat.budgeted) - newSpent,
-              })
-              .eq("id", categoryId);
-          } else if (type === "income") {
-            // Income adds to the category's available amount
-            const newAvailable = parseFloat(cat.available) + amount;
-            await supabase
-              .from("categories")
-              .update({
-                available: newAvailable,
-              })
-              .eq("id", categoryId);
-          }
+          const newSpent = parseFloat(cat.spent) + amount;
+          await supabase
+            .from("categories")
+            .update({
+              spent: newSpent,
+              available: parseFloat(cat.available) - amount,
+            })
+            .eq("id", categoryId);
         }
       }
 
@@ -171,8 +198,8 @@ router.delete(
         return;
       }
 
-      // Reverse the category update based on transaction type
-      if (transaction.category_id) {
+      // Reverse the category update only for expenses
+      if (transaction.category_id && transaction.type === "expense") {
         const { data: cat } = await supabase
           .from("categories")
           .select("spent, budgeted, available")
@@ -180,25 +207,14 @@ router.delete(
           .single();
 
         if (cat) {
-          if (transaction.type === "expense") {
-            const newSpent = parseFloat(cat.spent) - parseFloat(transaction.amount);
-            await supabase
-              .from("categories")
-              .update({
-                spent: newSpent,
-                available: parseFloat(cat.budgeted) - newSpent,
-              })
-              .eq("id", transaction.category_id);
-          } else if (transaction.type === "income") {
-            // Reverse income: subtract from available
-            const newAvailable = parseFloat(cat.available) - parseFloat(transaction.amount);
-            await supabase
-              .from("categories")
-              .update({
-                available: newAvailable,
-              })
-              .eq("id", transaction.category_id);
-          }
+          const newSpent = parseFloat(cat.spent) - parseFloat(transaction.amount);
+          await supabase
+            .from("categories")
+            .update({
+              spent: newSpent,
+              available: parseFloat(cat.available) + parseFloat(transaction.amount),
+            })
+            .eq("id", transaction.category_id);
         }
       }
 

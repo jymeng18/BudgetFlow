@@ -84,48 +84,30 @@ export function useAddTransaction(budgetType: string) {
                 const updatedSummary = { ...previousSummary };
                 if (newTransaction.type === "income") {
                     updatedSummary.totalIncome += newTransaction.amount;
-                    updatedSummary.totalAvailable += newTransaction.amount;
+                    // Income doesn't affect totalAvailable - that's sum of category available
+                } else if (newTransaction.type === "expense") {
+                    updatedSummary.totalSpent += newTransaction.amount;
+                    updatedSummary.totalAvailable -= newTransaction.amount;
                 }
-                // Expenses affect category spent/available, handled below
                 queryClient.setQueryData(queryKeys.summary(budgetType), updatedSummary);
             }
 
-            // Optimistically update category based on transaction type
-            if (newTransaction.categoryId && previousCategories) {
+            // Optimistically update category only for expenses
+            if (newTransaction.categoryId && previousCategories && newTransaction.type === "expense") {
                 const updatedCategories = previousCategories.map((group) => ({
                     ...group,
                     categories: group.categories.map((cat) => {
                         if (cat.id === newTransaction.categoryId) {
-                            if (newTransaction.type === "expense") {
-                                return {
-                                    ...cat,
-                                    spent: cat.spent + newTransaction.amount,
-                                    available: cat.available - newTransaction.amount,
-                                };
-                            } else if (newTransaction.type === "income") {
-                                // Income adds to the category's available amount
-                                return {
-                                    ...cat,
-                                    available: cat.available + newTransaction.amount,
-                                };
-                            }
+                            return {
+                                ...cat,
+                                spent: cat.spent + newTransaction.amount,
+                                available: cat.available - newTransaction.amount,
+                            };
                         }
                         return cat;
                     }),
                 }));
                 queryClient.setQueryData(queryKeys.categories(budgetType), updatedCategories);
-
-                // Also update summary for expense
-                if (newTransaction.type === "expense" && previousSummary) {
-                    queryClient.setQueryData<BudgetSummary>(
-                        queryKeys.summary(budgetType),
-                        (old) => old ? {
-                            ...old,
-                            totalSpent: old.totalSpent + newTransaction.amount,
-                            totalAvailable: old.totalAvailable - newTransaction.amount,
-                        } : old
-                    );
-                }
             }
 
             // Return context for rollback
@@ -192,30 +174,12 @@ export function useDeleteTransaction(budgetType: string) {
                         (old) => old ? {
                             ...old,
                             totalIncome: old.totalIncome - deletedTransaction.amount,
-                            totalAvailable: old.totalAvailable - deletedTransaction.amount,
+                            // Income doesn't affect totalAvailable - that's sum of category available
                         } : old
                     );
                 }
 
-                if (deletedTransaction.type === "expense" && deletedTransaction.categoryId) {
-                    // Update category
-                    if (previousCategories) {
-                        const updatedCategories = previousCategories.map((group) => ({
-                            ...group,
-                            categories: group.categories.map((cat) => {
-                                if (cat.id === deletedTransaction.categoryId) {
-                                    return {
-                                        ...cat,
-                                        spent: cat.spent - deletedTransaction.amount,
-                                        available: cat.available + deletedTransaction.amount,
-                                    };
-                                }
-                                return cat;
-                            }),
-                        }));
-                        queryClient.setQueryData(queryKeys.categories(budgetType), updatedCategories);
-                    }
-
+                if (deletedTransaction.type === "expense") {
                     // Update summary
                     if (previousSummary) {
                         queryClient.setQueryData<BudgetSummary>(
@@ -227,18 +191,17 @@ export function useDeleteTransaction(budgetType: string) {
                             } : old
                         );
                     }
-                }
 
-                // Handle income transaction with category - reverse the available increase
-                if (deletedTransaction.type === "income" && deletedTransaction.categoryId) {
-                    if (previousCategories) {
+                    // Update category only for expenses
+                    if (deletedTransaction.categoryId && previousCategories) {
                         const updatedCategories = previousCategories.map((group) => ({
                             ...group,
                             categories: group.categories.map((cat) => {
                                 if (cat.id === deletedTransaction.categoryId) {
                                     return {
                                         ...cat,
-                                        available: cat.available - deletedTransaction.amount,
+                                        spent: cat.spent - deletedTransaction.amount,
+                                        available: cat.available + deletedTransaction.amount,
                                     };
                                 }
                                 return cat;
