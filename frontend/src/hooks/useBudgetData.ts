@@ -83,9 +83,10 @@ export function useAddTransaction(budgetType: string) {
             if (previousSummary) {
                 const updatedSummary = { ...previousSummary };
                 if (newTransaction.type === "income") {
-                    updatedSummary.totalIncome += newTransaction.amount;
+                    updatedSummary.balance += newTransaction.amount;
                     // Income doesn't affect totalAvailable - that's sum of category available
                 } else if (newTransaction.type === "expense") {
+                    updatedSummary.balance -= newTransaction.amount;
                     updatedSummary.totalSpent += newTransaction.amount;
                     updatedSummary.totalAvailable -= newTransaction.amount;
                 }
@@ -173,7 +174,7 @@ export function useDeleteTransaction(budgetType: string) {
                         queryKeys.summary(budgetType),
                         (old) => old ? {
                             ...old,
-                            totalIncome: old.totalIncome - deletedTransaction.amount,
+                            balance: old.balance - deletedTransaction.amount,
                             // Income doesn't affect totalAvailable - that's sum of category available
                         } : old
                     );
@@ -186,6 +187,7 @@ export function useDeleteTransaction(budgetType: string) {
                             queryKeys.summary(budgetType),
                             (old) => old ? {
                                 ...old,
+                                balance: old.balance + deletedTransaction.amount,
                                 totalSpent: old.totalSpent - deletedTransaction.amount,
                                 totalAvailable: old.totalAvailable + deletedTransaction.amount,
                             } : old

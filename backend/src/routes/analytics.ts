@@ -41,12 +41,11 @@ router.get(
         return;
       }
 
-      // Get income transactions
+      // Get all transactions to calculate balance
       const { data: transactionsData, error: txError } = await supabase
         .from("transactions")
         .select("amount, type")
-        .eq("user_id", userId)
-        .eq("type", "income");
+        .eq("user_id", userId);
 
       if (txError) {
         res.status(500).json({ error: txError.message });
@@ -54,6 +53,7 @@ router.get(
       }
 
       let totalIncome = 0;
+      let totalExpenses = 0;
       let totalAvailable = 0;
       let totalBudgeted = 0;
       let totalSpent = 0;
@@ -65,12 +65,18 @@ router.get(
       }
 
       for (const t of transactionsData) {
-        totalIncome += parseFloat(t.amount);
+        if (t.type === "income") {
+          totalIncome += parseFloat(t.amount);
+        } else if (t.type === "expense") {
+          totalExpenses += parseFloat(t.amount);
+        }
       }
+
+      const balance = totalIncome - totalExpenses;
 
       res.status(200).json({
         budgetType: budgetType,
-        totalIncome: totalIncome,
+        balance: balance,
         totalBudgeted: totalBudgeted,
         totalSpent: totalSpent,
         totalAvailable: totalAvailable,

@@ -45,8 +45,8 @@ const Index = () => {
     const summaryItems = summaryData
         ? [
               {
-                  label: "Income",
-                  amount: summaryData.totalIncome,
+                  label: "Balance",
+                  amount: summaryData.balance,
                   type: "income" as const,
               },
               {

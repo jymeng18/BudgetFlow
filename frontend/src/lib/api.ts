@@ -46,7 +46,7 @@ export interface Transaction {
 
 export interface BudgetSummary {
     budgetType: string;
-    totalIncome: number;
+    balance: number;
     totalBudgeted: number;
     totalSpent: number;
     totalAvailable: number;
