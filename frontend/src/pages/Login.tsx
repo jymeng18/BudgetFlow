@@ -24,7 +24,9 @@ import {
 } from "@/components/ui/card";
 import { login } from "@/lib/api";
 import { Loader2, ArrowLeft, Eye, EyeOff } from "lucide-react";
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+ 
 const Login = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -73,23 +75,24 @@ const Login = () => {
       // Clear any cached data from previous user before navigating
       queryClient.clear();
       
-      navigate("/app");
+      toast.success("Signed in successfully!");
+      
+      // Delay navigation to allow toast to be visible
+      setTimeout(() => {
+        navigate("/app");
+      }, 2500);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An unexpected error occurred.");
-    } finally {
       setIsLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <ToastContainer position="top-right" autoClose={3000} />
       {/* Header */}
       <header className="p-4">
-        <Button
-          variant="ghost"
-          onClick={() => navigate("/")}
-          className="gap-2"
-        >
+        <Button variant="ghost" onClick={() => navigate("/")} className="gap-2">
           <ArrowLeft className="w-4 h-4" />
           Back to Home
         </Button>
@@ -155,11 +158,7 @@ const Login = () => {
             </CardContent>
 
             <CardFooter className="flex flex-col gap-4">
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={isLoading}
-              >
+              <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />

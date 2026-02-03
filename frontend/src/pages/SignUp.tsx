@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/card";
 import { signUp } from "@/lib/api";
 import { Loader2, ArrowLeft, Eye, EyeOff } from "lucide-react";
+import { ToastContainer, toast } from "react-toastify";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -78,7 +79,11 @@ const SignUp = () => {
         localStorage.setItem("user_id", response.user.id);
       }
       
-      navigate("/app");
+      toast.success("Signed up successfully");
+      setTimeout(() => {
+        navigate("/app");
+      }, 2000)
+
     } catch (err) {
       setError(err instanceof Error ? err.message : "An unexpected error occurred.");
     } finally {
@@ -88,6 +93,8 @@ const SignUp = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <ToastContainer position="top-right" autoClose={3000} />
+      
       {/* Header */}
       <header className="p-4">
         <Button
