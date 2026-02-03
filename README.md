@@ -15,10 +15,6 @@
   <a href="#about-the-project"><b>About The Project</b></a>
   &nbsp;·&nbsp;
   <a href="#how-it-works"><b>How It Works</b></a>
-  &nbsp;·&nbsp;
-  <a href="#tech-stack"><b>Tech Stack</b></a>
-  &nbsp;·&nbsp;
-  <a href="#key-features"><b>Features</b></a>
 </p>
 
 <p align="center">
@@ -30,9 +26,9 @@
 
 ---
 
-## About The Project
+## About The Project, Why BudgetFlow?
 
-BudgetFlow is a comprehensive personal finance management platform that helps users track their spending, manage budgets, and gain intelligent insights into their financial habits. With AI-powered analytics and intuitive design, BudgetFlow makes financial planning accessible and actionable.
+BudgetFlow is a comprehensive personal finance management platform that helps users track their spending, manage budgets, and gain intelligent insights into their financial habits. With AI-powered analytics and intuitive design, BudgetFlow makes financial planning accessible and actionable. I made BudgetFlow because I found all the financial trackers online to be either too complicated, requiring multiple step processes to set budget goals, or was simply too overwhelming for users to navigate around. BudgetFlow's core is being light weight and used for quick and easy budgeting.
 
 ## How It Works
 
@@ -43,30 +39,34 @@ BudgetFlow is a comprehensive personal finance management platform that helps us
 5. **Analyze Reports**: Access detailed analytics and reports to understand your financial health
 6. **Optimize Spending**: Use insights to make informed decisions and improve your financial habits
 
-## Tech Stack
+## Demo
 
-**Frontend:**
-- React with TypeScript
-- Vite for fast development and building
-- Tailwind CSS for responsive styling
-- shadcn/ui for modern UI components
-- Chart.js for data visualization
-- React Query for efficient data fetching
-- React Router for navigation
+<p align="center">
+  <a href="#" target="_blank" rel="noopener noreferrer">
+    <img src="frontend/public/index.png" alt="BudgetFlow App Screenshot" width="1100" />
+  </a>
+</p>
 
-**Backend:**
-- Express.js server with TypeScript
-- Supabase for database and authentication
-- OpenAI integration for AI-powered insights
-- RESTful API design
-- Rate limiting and security middleware
-- Docker containerization
+## 
 
-**Database & Services:**
-- Supabase PostgreSQL database
-- OpenAI API for intelligent insights
-- Secure authentication and authorization
-- Real-time data synchronization
+- User can add transactions, one being **Income**, other being **Expense**
+- User sets **Budget Targets** on each expense category and the application ensures you are not exceeding budget
+- **Expense Categories** can be edited and modified as the user likes
+- **Budget Targets** can be deleted, with the addition of all past associative transactions being deleted too
+- **Interactive Status Bar** represents how close you are to exceeding your budget, with remaining budget shown in **Available** column
 
+## Demo Cont.
 
+<p align="center">
+  <a href="#" target="_blank" rel="noopener noreferrer">
+    <img src="frontend/public/analytics.png" alt="BudgetFlow App Screenshot" width="1100" />
+  </a>
+</p>
 
+##
+- Displays all of user's **spending habits and areas of expense** that require attention
+- Ensures that user has a clear understanding of how much they are actually **saving vs. spending**
+- **Clean, lightweight user interface**, ensuring that information is not overwhelming for user experience
+
+## Message from Creator
+BudgetFlow is not at all a perfect application, it was made by me in the sense to learn more about **Fullstack Web Development**, specifically with **TypeScript, React, Node.js, and Tailwind CSS**. This is my first official Fullstack project, hence many imperfections. I just wanted to say for those who took the time to read this and try my application, thank you so very much and please look forward to my continuous development.
