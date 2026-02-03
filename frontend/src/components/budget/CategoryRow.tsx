@@ -31,7 +31,7 @@ export function CategoryRow({ category, onClick, isHighlighted }: CategoryRowPro
                 isHighlighted && "animate-pulse-border"
             )}
             style={{
-                boxShadow: isHighlighted ? "inset 0 0 0 2px hsl(var(--primary))" : undefined,
+                boxShadow: isHighlighted ? "inset 0 0 0 2px rgb(239 68 68)" : undefined,
             }}
         >
             <div className="flex items-center gap-3 pl-6">
