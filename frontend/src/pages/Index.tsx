@@ -33,6 +33,7 @@ import { Plus } from "lucide-react";
 const Index = () => {
     const [budgetType, setBudgetType] = useState<BudgetType>("personal");
     const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false);
+    const [highlightedCategoryId, setHighlightedCategoryId] = useState<string | null>(null);
 
     // React Query hooks with optimistic updates
     const { data: categoryGroups = [] } = useCategories(budgetType);
@@ -68,6 +69,13 @@ const Index = () => {
     // Handle saving a new transaction with optimistic update
     const handleSaveTransaction = (transaction: TransactionData) => {
         addTransactionMutation.mutate(transaction);
+        
+        // Highlight the affected category
+        if (transaction.categoryId) {
+            setHighlightedCategoryId(transaction.categoryId);
+            // Remove highlight after animation completes
+            setTimeout(() => setHighlightedCategoryId(null), 2000);
+        }
     };
 
     // Get flattened categories for the dropdown in AddTransactionModal
@@ -108,6 +116,7 @@ const Index = () => {
             <BudgetTable
               budgetType={budgetType}
               categoryGroups={categoryGroups}
+              highlightedCategoryId={highlightedCategoryId}
             />
             <RecentTransactions
               transactions={transactions}

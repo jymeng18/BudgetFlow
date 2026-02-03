@@ -5,9 +5,10 @@ import type { Category } from "./CategoryGroup";
 interface CategoryRowProps {
     category: Category;
     onClick?: (category: Category) => void;
+    isHighlighted?: boolean;
 }
 
-export function CategoryRow({ category, onClick }: CategoryRowProps) {
+export function CategoryRow({ category, onClick, isHighlighted }: CategoryRowProps) {
     const { name, budgeted, spent, available } = category;
 
     const formatCurrency = (amount: number) => {
@@ -25,9 +26,13 @@ export function CategoryRow({ category, onClick }: CategoryRowProps) {
         <div
             onClick={() => onClick?.(category)}
             className={cn(
-                "grid grid-cols-[1fr,120px,120px,120px] gap-4 px-4 py-3 transition-colors group",
-                onClick && "cursor-pointer hover:bg-accent/50"
+                "grid grid-cols-[1fr,120px,120px,120px] gap-4 px-4 py-3 transition-all duration-500 group relative",
+                onClick && "cursor-pointer hover:bg-accent/50",
+                isHighlighted && "animate-pulse-border"
             )}
+            style={{
+                boxShadow: isHighlighted ? "inset 0 0 0 2px hsl(var(--primary))" : undefined,
+            }}
         >
             <div className="flex items-center gap-3 pl-6">
                 <div className="flex-1">

@@ -15,12 +15,14 @@ interface CategoryGroupProps {
     name: string;
     categories: Category[];
     onCategoryClick?: (category: Category) => void;
+    highlightedCategoryId?: string | null;
 }
 
 export function CategoryGroup({
     name,
     categories,
     onCategoryClick,
+    highlightedCategoryId,
 }: CategoryGroupProps) {
     const [isOpen, setIsOpen] = useState(true);
 
@@ -84,6 +86,7 @@ export function CategoryGroup({
                             key={category.id}
                             category={category}
                             onClick={onCategoryClick}
+                            isHighlighted={highlightedCategoryId === category.id}
                         />
                     ))}
                 </div>

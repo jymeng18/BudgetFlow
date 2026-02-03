@@ -14,11 +14,13 @@ interface CategoryGroupData {
 interface BudgetTableProps {
     budgetType: BudgetType;
     categoryGroups: CategoryGroupData[];
+    highlightedCategoryId?: string | null;
 }
 
 export function BudgetTable({
     budgetType,
     categoryGroups,
+    highlightedCategoryId,
 }: BudgetTableProps) {
     const [selectedCategory, setSelectedCategory] = useState<Category | null>(
         null
@@ -59,6 +61,7 @@ export function BudgetTable({
                         name={group.name}
                         categories={group.categories}
                         onCategoryClick={handleCategoryClick}
+                        highlightedCategoryId={highlightedCategoryId}
                     />
                 ))}
             </div>

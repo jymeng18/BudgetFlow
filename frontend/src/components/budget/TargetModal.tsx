@@ -70,7 +70,7 @@ export function TargetModal({
                     </div>
                     <button
                         onClick={handleDelete}
-                        className="p-1 hover:bg-destructive/10 rounded transition-colors"
+                        className="p-1 hover:bg-destructive/10 rounded transition-colors mr-4"
                     >
                         <Trash2 className="w-4 h-4 text-destructive" />
                     </button>
