@@ -2,7 +2,7 @@ import { useState } from "react";
 import { CategoryGroup, type Category } from "./CategoryGroup";
 import { type BudgetType } from "./BudgetTypeTabs";
 import { TargetModal, type TargetData } from "./TargetModal";
-import { useUpdateCategoryBudget } from "@/hooks/useBudgetData";
+import { useUpdateCategoryBudget, useDeleteCategory } from "@/hooks/useBudgetData";
 
 // Type for category group data from the backend
 interface CategoryGroupData {
@@ -25,6 +25,7 @@ export function BudgetTable({
     );
     const [isTargetModalOpen, setIsTargetModalOpen] = useState(false);
     const updateBudgetMutation = useUpdateCategoryBudget(budgetType);
+    const deleteCategoryMutation = useDeleteCategory(budgetType);
 
     const handleCategoryClick = (category: Category) => {
         setSelectedCategory(category);
@@ -37,7 +38,7 @@ export function BudgetTable({
     };
 
     const handleDeleteTarget = (categoryId: string) => {
-        updateBudgetMutation.mutate({ categoryId, budgeted: 0 });
+        deleteCategoryMutation.mutate(categoryId);
     };
 
     return (

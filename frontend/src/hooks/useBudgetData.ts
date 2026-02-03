@@ -15,6 +15,7 @@ import {
     addTransaction,
     deleteTransaction,
     updateCategoryBudget,
+    deleteCategory,
     getBudgetSummary,
     type Transaction,
     type CategoryGroup,
@@ -360,6 +361,94 @@ export function useUpdateCategoryBudget(budgetType: string) {
         onSettled: () => {
             queryClient.invalidateQueries({ queryKey: queryKeys.categories(budgetType) });
             queryClient.invalidateQueries({ queryKey: queryKeys.summary(budgetType) });
+        },
+    });
+}
+
+export function useDeleteCategory(budgetType: string) {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (categoryId: string) => deleteCategory(budgetType, categoryId),
+
+        onMutate: async (categoryId) => {
+            await queryClient.cancelQueries({ queryKey: queryKeys.categories(budgetType) });
+            await queryClient.cancelQueries({ queryKey: queryKeys.summary(budgetType) });
+            await queryClient.cancelQueries({ queryKey: queryKeys.transactions });
+
+            const previousCategories = queryClient.getQueryData<CategoryGroup[]>(
+                queryKeys.categories(budgetType)
+            );
+            const previousSummary = queryClient.getQueryData<BudgetSummary>(
+                queryKeys.summary(budgetType)
+            );
+            const previousTransactions = queryClient.getQueryData<Transaction[]>(
+                queryKeys.transactions
+            );
+
+            // Find the category being deleted
+            let deletedCategory: any = null;
+            if (previousCategories) {
+                for (const group of previousCategories) {
+                    const cat = group.categories.find((c) => c.id === categoryId);
+                    if (cat) {
+                        deletedCategory = cat;
+                        break;
+                    }
+                }
+            }
+
+            // Optimistically remove category from groups
+            if (previousCategories) {
+                const updatedCategories = previousCategories
+                    .map((group) => ({
+                        ...group,
+                        categories: group.categories.filter((cat) => cat.id !== categoryId),
+                    }))
+                    .filter((group) => group.categories.length > 0); // Remove empty groups
+                queryClient.setQueryData(queryKeys.categories(budgetType), updatedCategories);
+            }
+
+            // Optimistically remove transactions associated with this category
+            if (previousTransactions) {
+                const updatedTransactions = previousTransactions.filter(
+                    (txn) => txn.categoryId !== categoryId
+                );
+                queryClient.setQueryData(queryKeys.transactions, updatedTransactions);
+            }
+
+            // Optimistically update summary
+            if (deletedCategory && previousSummary) {
+                queryClient.setQueryData<BudgetSummary>(
+                    queryKeys.summary(budgetType),
+                    (old) => old ? {
+                        ...old,
+                        totalBudgeted: old.totalBudgeted - deletedCategory.budgeted,
+                        totalSpent: old.totalSpent - deletedCategory.spent,
+                        totalAvailable: old.totalAvailable - deletedCategory.available,
+                    } : old
+                );
+            }
+
+            return { previousCategories, previousSummary, previousTransactions };
+        },
+
+        onError: (_err, _categoryId, context) => {
+            if (context?.previousCategories) {
+                queryClient.setQueryData(queryKeys.categories(budgetType), context.previousCategories);
+            }
+            if (context?.previousSummary) {
+                queryClient.setQueryData(queryKeys.summary(budgetType), context.previousSummary);
+            }
+            if (context?.previousTransactions) {
+                queryClient.setQueryData(queryKeys.transactions, context.previousTransactions);
+            }
+        },
+
+        onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: queryKeys.categories(budgetType) });
+            queryClient.invalidateQueries({ queryKey: queryKeys.summary(budgetType) });
+            queryClient.invalidateQueries({ queryKey: queryKeys.transactions });
         },
     });
 }

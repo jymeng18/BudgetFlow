@@ -133,6 +133,30 @@ export async function updateCategoryBudget(
     return response.json();
 }
 
+export async function deleteCategory(
+    budgetType: string,
+    categoryId: string
+): Promise<{ 
+    message: string; 
+    deletedTransactionsCount: number;
+    balanceAdjustment: number;
+    category: { id: string; name: string; budgeted: number; spent: number };
+}> {
+    const response = await fetch(
+        `${API_BASE_URL}/categories/${budgetType}/${categoryId}`,
+        {
+            method: "DELETE",
+            headers: getAuthHeaders(),
+        }
+    );
+
+    if (!response.ok) {
+        throw new Error("Failed to delete category");
+    }
+
+    return response.json();
+}
+
 export async function getBudgetSummary(
     budgetType: string
 ): Promise<BudgetSummary> {
