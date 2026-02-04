@@ -214,7 +214,7 @@ const Landing = () => {
           </p>
           <Button 
             size="lg"
-            onClick={() => navigate("/app")}
+            onClick={() => navigate("/signup")}
             className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground font-semibold px-10 py-7 text-lg rounded-xl shadow-lg shadow-primary/30 hover:shadow-xl hover:scale-105 transition-all"
           >
             Start Budgeting Now
