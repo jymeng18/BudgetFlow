@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { PhoneMockup } from "@/components/landing/PhoneMockup";
 import { FeatureCard } from "@/components/landing/FeatureCard";
-import { ArrowRight, Sparkles, Shield, Zap, Users, ClipboardList, Leaf, Heart, CreditCard, PiggyBank } from "lucide-react";
+import { ArrowRight, Sparkles, Shield, Zap, Users, ClipboardList, Leaf, Heart, CreditCard, PiggyBank, Star } from "lucide-react";
 import type { ReactNode } from "react";
 
 const Landing = () => {
@@ -54,7 +54,7 @@ const Landing = () => {
   const stats = [
     { value: "3+", label: "Active Users" },
     { value: "$50B+", label: "Money Managed" },
-    { value: "4.5★", label: "Rating in My Heart" },
+    { value: "4.5", label: "Rating in My Heart", hasStar: true },
   ];
 
   return (
@@ -164,7 +164,10 @@ const Landing = () => {
             <div className="flex items-center justify-center lg:justify-start gap-8 mt-10 pt-10 border-t border-sidebar-border/50">
               {stats.map((stat, i) => (
                 <div key={i} className="text-center lg:text-left">
-                  <p className="text-2xl md:text-3xl font-bold text-sidebar-foreground">{stat.value}</p>
+                  <p className="text-2xl md:text-3xl font-bold text-sidebar-foreground flex items-center gap-1 justify-center lg:justify-start">
+                    {stat.value}
+                    {stat.hasStar && <Star className="w-5 h-5 text-warning fill-warning" />}
+                  </p>
                   <p className="text-sm text-sidebar-muted">{stat.label}</p>
                 </div>
               ))}

@@ -1,4 +1,4 @@
-import { TrendingUp } from "lucide-react";
+import { TrendingUp, User, Inbox, DollarSign, BarChart3, Plus, Bell } from "lucide-react";
 import { useState } from "react";
 
 export const PhoneMockup = () => {
@@ -45,9 +45,7 @@ export const PhoneMockup = () => {
                                 Home
                             </h3>
                             <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-                                <span className="text-xs font-medium text-primary">
-                                    👤
-                                </span>
+                                <User className="w-4 h-4 text-primary" />
                             </div>
                         </div>
 
@@ -70,7 +68,7 @@ export const PhoneMockup = () => {
                             <div className="flex items-center justify-between p-3 bg-secondary rounded-xl border border-border/50">
                                 <div className="flex items-center gap-3">
                                     <div className="w-8 h-8 rounded-lg bg-warning/20 flex items-center justify-center">
-                                        <span className="text-sm">📥</span>
+                                        <Inbox className="w-4 h-4 text-warning" />
                                     </div>
                                     <div>
                                         <span className="text-sm font-medium text-foreground">
@@ -89,7 +87,7 @@ export const PhoneMockup = () => {
                             <div className="flex items-center justify-between p-3 bg-secondary rounded-xl border border-border/50">
                                 <div className="flex items-center gap-3">
                                     <div className="w-8 h-8 rounded-lg bg-success/20 flex items-center justify-center">
-                                        <span className="text-sm">💰</span>
+                                        <DollarSign className="w-4 h-4 text-success" />
                                     </div>
                                     <div>
                                         <span className="text-sm font-medium text-foreground">
@@ -197,24 +195,25 @@ export const PhoneMockup = () => {
                         {/* Quick Actions */}
                         <div className="flex justify-around pt-4 border-t border-border">
                             {[
-                                { icon: "📊", label: "Stats" },
-                                { icon: "➕", label: "Add" },
-                                { icon: "🔔", label: "Alerts" },
-                            ].map((action, i) => (
-                                <div
-                                    key={i}
-                                    className="flex flex-col items-center gap-1"
-                                >
-                                    <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
-                                        <span className="text-lg">
-                                            {action.icon}
+                                { icon: BarChart3, label: "Stats" },
+                                { icon: Plus, label: "Add" },
+                                { icon: Bell, label: "Alerts" },
+                            ].map((action, i) => {
+                                const Icon = action.icon;
+                                return (
+                                    <div
+                                        key={i}
+                                        className="flex flex-col items-center gap-1"
+                                    >
+                                        <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
+                                            <Icon className="w-5 h-5 text-foreground" />
+                                        </div>
+                                        <span className="text-xs text-muted-foreground">
+                                            {action.label}
                                         </span>
                                     </div>
-                                    <span className="text-xs text-muted-foreground">
-                                        {action.label}
-                                    </span>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     </div>
                 </div>
