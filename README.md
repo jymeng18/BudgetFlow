@@ -67,6 +67,3 @@ BudgetFlow is a comprehensive personal finance management platform that helps us
 - Displays all of user's **spending habits and areas of expense** that require attention
 - Ensures that user has a clear understanding of how much they are actually **saving vs. spending**
 - **Clean, lightweight user interface**, ensuring that information is not overwhelming for user experience
-
-## Message from Creator
-BudgetFlow is not at all a perfect application, it was made by me in the sense to learn more about **Fullstack Web Development**, specifically with **TypeScript, React, Node.js, and Tailwind CSS**. This is my first official Fullstack project, hence many imperfections. I just wanted to say for those who took the time to read this and try my application, thank you so very much and please look forward to my continuous development.
