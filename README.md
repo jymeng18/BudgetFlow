@@ -1,8 +1,3 @@
-<p align="center">
-  <a href="#" target="_blank" rel="noopener noreferrer">
-    <img src="frontend/public/intro_bflow.png" alt="BudgetFlow App Screenshot" width="1100" />
-  </a>
-</p>
 
 <h1 align="center">BudgetFlow</h1>
 
